@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Core.h"
-#include "EntityManager.h"
+#include "ECManager.h"
 
 namespace paecs
 {
 
-    class EntityManager;
+    class ECManager;
     class Entity
     {
 
@@ -21,7 +21,7 @@ namespace paecs
         using Version = uint8_t;
 
         //construct
-        Entity(EntityManager &entityManager1, Id index = 0, Version version = 0) : entityManager(entityManager1)
+        Entity(ECManager &ECManager1, Id index = 0, Version version = 0) : ECManager(ECManager1)
         {
             id = (version << config::INDEX_BITS) | index;
         }
@@ -48,7 +48,7 @@ namespace paecs
         T &getComponent() const;
 
     private:
-        EntityManager &entityManager;
+        ECManager &ECManager;
         Id id;
         /* data */
     };

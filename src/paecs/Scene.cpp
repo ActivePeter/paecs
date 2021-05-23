@@ -1,13 +1,14 @@
 
 #include "Core.h"
 #include "Scene.h"
+#include "memory"
 
 namespace paecs
 {
     Scene::Scene(/* args */)
     {
-        entityManager = std::make_unique<EntityManager>(*this);
-        systemManager = std::make_unique<SystemManager>(*this);
+        ECManager = std::make_unique<ECManager>(*this);
+        SManager = std::make_unique<SManager>(*this);
         // eventManager = std::make_unique<EventManager>(*this);
     }
 }

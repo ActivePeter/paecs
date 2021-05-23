@@ -7,11 +7,11 @@
 namespace paecs
 {
     class Scene;
-    class SystemManager
+    class SManager
     {
 
     public:
-        SystemManager(Scene &scene1) : scene(scene1) {} // {}
+        SManager(Scene &scene1) : scene(scene1) {} // {}
 
     private:
         Scene &scene;

@@ -1,12 +1,12 @@
 
 #include "Core.h"
 
-#include "EntityManager.h"
+#include "ECManager.h"
 #include "Entity.h"
 
 namespace paecs
 {
-    Entity EntityManager::createEntity()
+    Entity ECManager::createEntity()
     {
         Entity::Id index;
 
@@ -30,13 +30,33 @@ namespace paecs
 
         // assert(index < versions.size());
         Entity e(*this, index, versions[index]); //一个entity参数有index version 和this
-        // e.entityManager = this;
+        // e.ECManager = this;
 
         return e;
     }
+
+    template <typename T>
+    std::shared_ptr<ComponentVec<T>> ECManager::getComponentVectorOfT()
+    {
+
+        const auto componentId = Component<T>::getId();
+
+        if (componentId >= componentPools.size())
+        {
+            componentPools.resize(componentId + 1, nullptr);
+        }
+
+        if (!componentPools[componentId])
+        {
+            std::shared_ptr<Pool<T>> pool(new Pool<T>());
+            componentPools[componentId] = pool;
+        }
+
+        return std::static_pointer_cast<Pool<T>>(componentPools[componentId]);
+    }
 }
 
-//     EntityManager::EntityManager(Scene &scene1)
+//     ECManager::ECManager(Scene &scene1)
 //     {
 //         // this->scene = scene1;
 //         // scene(scene1);

@@ -1,6 +1,6 @@
 #include "Core.h"
 
-#include "SystemManager.h"
+#include "SManager.h"
 namespace paecs
 {
 

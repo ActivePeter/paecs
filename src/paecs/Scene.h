@@ -2,22 +2,22 @@
 
 #include "Core.h"
 
-#include "EntityManager.h"
-#include "SystemManager.h"
+#include "ECManager.h"
+#include "SManager.h"
 
 #include <memory>
 
 namespace paecs
 {
-    class EntityManager;
+    class ECManager;
     class Scene
     {
     private:
         /* data */
     public:
         Scene(/* args */);
-        std::unique_ptr<EntityManager> entityManager = nullptr;
-        std::unique_ptr<SystemManager> systemManager = nullptr;
+        std::unique_ptr<ECManager> ECManager = nullptr;
+        std::unique_ptr<SManager> SManager = nullptr;
         // std::unique_ptr<EventManager> eventManager = nullptr;
         // ~Scene();
     };
