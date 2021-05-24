@@ -13,11 +13,15 @@ namespace paecs
     class Scene
     {
     private:
+        std::unique_ptr<ECManager> ecManager = nullptr;
+        std::unique_ptr<SManager> sManager = nullptr;
         /* data */
     public:
         Scene(/* args */);
-        std::unique_ptr<ECManager> ecManager = nullptr;
-        std::unique_ptr<SManager> sManager = nullptr;
+        ECManager &getEntityManager() const;
+        SManager &getSystemManager() const;
+        // EventManager &getEventManager() const;
+
         // std::unique_ptr<EventManager> eventManager = nullptr;
         // ~Scene();
     };

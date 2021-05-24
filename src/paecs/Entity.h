@@ -34,6 +34,7 @@ namespace paecs
         // gets //////////////////////////////////
         Id getIndex() const { return id & IndexMask; } //后续考虑换成union
         Version getVersion() const { return (id >> config::INDEX_BITS) & VersionMask; }
+        const ComponentMask &getComponentMask() const;
 
         // component ////////////////////////////
         template <typename T>
@@ -50,6 +51,7 @@ namespace paecs
     private:
         ECManager &ecManager;
         Id id;
+
         /* data */
     };
 }

@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "Entity.h"
 #include "Component.h"
+#include "ComponentPool.h"
 #include "memory"
 
 namespace paecs
@@ -32,16 +33,35 @@ namespace paecs
         const auto componentId = Component<T>::getId();
         const auto entityId = e.getIndex();
         assert(entityId < componentMasks.size());
-        componentMasks[entityId].set(componentId, false);
+        // ComponentMask[entityId].t
+        componentMasks[entityId].set(componentId, false); //mask 用来标记component是否有效
     }
 
     template <typename T>
     bool Entity::hasComponent() const
     {
+        const auto componentId = Component<T>::getId();
+        const auto entityId = e.getIndex();
+        assert(entityId < componentMasks.size());
+        // componentMasks[entityId].;
+        //.(componentId, false);
+        return componentMasks[entityId].test(componentId);
     }
 
+    //获取该entity对应类型的component
     template <typename T>
     T &Entity::getComponent() const
     {
+        const auto componentId = Component<T>::getId();
+        const auto entityId = e.getIndex();
+
+        assert(hasComponent<T>(e));
+        assert(componentId < componentPools.size());
+        // auto componentPool = std::static_pointer_cast<Pool<T>>(componentPools[componentId]);
+        auto componentPool = ecManager.getComponentPoolOfT<T>();
+
+        assert(componentPool);
+        assert(entityId < componentPool->getSize());
+        return componentPool->get(entityId);
     }
 }

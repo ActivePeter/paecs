@@ -54,6 +54,13 @@ namespace paecs
         //通过对应id获取对应类型的抽象pool指针并转换为具体pool指针，并返回
         return std::static_pointer_cast<Pool<T>>(componentPoolVec[componentId]);
     }
+
+    const ComponentMask &ECManager::getComponentMaskOfEntity(Entity &e) const
+    {
+        const auto index = e.getIndex();
+        assert(index < componentMasks.size());
+        return componentMasks[index];
+    }
 }
 
 //     ECManager::ECManager(Scene &scene1)

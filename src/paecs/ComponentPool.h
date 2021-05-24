@@ -12,6 +12,7 @@ namespace paecs
         // AbstractComponentPool(/* args */);
     };
 
+    //每种component都创建一个模板类
     template <typename T>
     class ComponentPool : public AbstractComponentPool
     {
@@ -78,7 +79,7 @@ namespace paecs
         }
 
     private:
-        std::vector data;
+        std::vector<T> data;
         /* data */
     };
 }

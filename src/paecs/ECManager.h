@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "vector"
 #include "deque"
+#include "bitset"
 
 // #include "ECManager.h"
 #include "Scene.h"
@@ -23,6 +24,8 @@ namespace paecs
         template <typename T>
         std::shared_ptr<ComponentPool<T>> getComponentPoolOfT();
 
+        const ComponentMask &getComponentMaskOfEntity(Entity &e) const;
+
     private:
         Scene &scene;
         // vector of entities that are awaiting creation
@@ -41,5 +44,9 @@ namespace paecs
         // vector of component pools, each pool contains all the data for a certain component type
         // vector index = component id, pool index = entity id
         std::vector<std::shared_ptr<AbstractComponentPool>> componentPoolVec;
+
+        // vector of component masks, each mask lets us know which components are turned "on" for a specific entity
+        // vector index = entity id, each bit set to 1 means that the entity has that component
+        std::vector<ComponentMask> componentMasks;
     };
 }
