@@ -21,7 +21,7 @@ namespace paecs
 
         //获取对应类型的component的Vector
         template <typename T>
-        std::shared_ptr<ComponentVec<T>> getComponentVectorOfT();
+        std::shared_ptr<ComponentPool<T>> getComponentPoolOfT();
 
     private:
         Scene &scene;
@@ -40,6 +40,6 @@ namespace paecs
 
         // vector of component pools, each pool contains all the data for a certain component type
         // vector index = component id, pool index = entity id
-        std::vector<std::shared_ptr<AbstractComponentPool>> componentVectors;
+        std::vector<std::shared_ptr<AbstractComponentPool>> componentPoolVec;
     };
 }

@@ -36,7 +36,7 @@ namespace paecs
         // Returns the unique id of Component<T>
         static Id getId()
         {
-            static auto id = nextId++;
+            static auto id = nextId++; //只有第一次调用会执行赋值,后续都是记忆之前的数据,
             assert(id < MaxComponents);
             return id;
         }
@@ -44,7 +44,4 @@ namespace paecs
 
     // Used to keep track of which components an entity has and also which entities a system is interested in.
     using ComponentMask = std::bitset<BaseComponent::MaxComponents>; //<total size>
-
-    template <typename T>
-    using ComponentVec = std::vector<Component<T>>;
 }

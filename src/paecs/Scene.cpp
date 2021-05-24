@@ -7,8 +7,8 @@ namespace paecs
 {
     Scene::Scene(/* args */)
     {
-        ECManager = std::make_unique<ECManager>(*this);
-        SManager = std::make_unique<SManager>(*this);
+        ecManager = std::make_unique<ECManager>(*this);
+        sManager = std::make_unique<SManager>(*this);
         // eventManager = std::make_unique<EventManager>(*this);
     }
 }

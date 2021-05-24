@@ -13,27 +13,26 @@ namespace paecs
         const auto componentId = Component<T>::getId();
         const auto entityId = this->getIndex();
 
-        std::shared_ptr<std::vector<T>> componentVector = accommodateComponent<T>();
+        //根据类型获取到存储这一类型components的pool的指针
+        auto componentPool = ecManager.getComponentPoolOfT<T>();
 
-        if (entityId >= componentVector->getSize())
+        //如果entityId比componentdVector的size大,那么扩大vector尺寸
+        if (entityId >= componentPool->getSize())
         {
-            componentVector->resize(versions.size());
+            componentPool->resize(versions.size());
         }
 
-        componentVector->set(entityId, component);
-        componentMasks[entityId].set(componentId);
-    }
-
-    template <typename T, typename... Args>
-    void Entity::addComponent(Args &&...args)
-    {
-        T component(std::forward<Args>(args)...);
-        addComponent<T>(e, component);
+        componentPool->set(entityId, component);
+        // componentMasks[entityId].set(componentId);
     }
 
     template <typename T>
     void Entity::removeComponent()
     {
+        const auto componentId = Component<T>::getId();
+        const auto entityId = e.getIndex();
+        assert(entityId < componentMasks.size());
+        componentMasks[entityId].set(componentId, false);
     }
 
     template <typename T>

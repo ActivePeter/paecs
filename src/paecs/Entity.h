@@ -21,7 +21,7 @@ namespace paecs
         using Version = uint8_t;
 
         //construct
-        Entity(ECManager &ECManager1, Id index = 0, Version version = 0) : ECManager(ECManager1)
+        Entity(ECManager &ECManager1, Id index = 0, Version version = 0) : ecManager(ECManager1)
         {
             id = (version << config::INDEX_BITS) | index;
         }
@@ -48,7 +48,7 @@ namespace paecs
         T &getComponent() const;
 
     private:
-        ECManager &ECManager;
+        ECManager &ecManager;
         Id id;
         /* data */
     };

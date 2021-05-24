@@ -36,23 +36,23 @@ namespace paecs
     }
 
     template <typename T>
-    std::shared_ptr<ComponentVec<T>> ECManager::getComponentVectorOfT()
+    std::shared_ptr<ComponentPool<T>> ECManager::getComponentPoolOfT()
     {
 
         const auto componentId = Component<T>::getId();
 
-        if (componentId >= componentPools.size())
+        if (componentId >= componentPoolVec.size()) //若存储pool的vector不够，扩大存储pool的vector
         {
-            componentPools.resize(componentId + 1, nullptr);
+            componentPoolVec.resize(componentId + 1, nullptr);
         }
 
-        if (!componentPools[componentId])
+        if (!componentPoolVec[componentId]) //若不存在该component类型的pool 则新建
         {
-            std::shared_ptr<Pool<T>> pool(new Pool<T>());
-            componentPools[componentId] = pool;
+            std::shared_ptr<ComponentPool<T>> newpool(new ComponentPool<T>());
+            componentPoolVec[componentId] = newpool;
         }
-
-        return std::static_pointer_cast<Pool<T>>(componentPools[componentId]);
+        //通过对应id获取对应类型的抽象pool指针并转换为具体pool指针，并返回
+        return std::static_pointer_cast<Pool<T>>(componentPoolVec[componentId]);
     }
 }
 

@@ -16,8 +16,8 @@ namespace paecs
         /* data */
     public:
         Scene(/* args */);
-        std::unique_ptr<ECManager> ECManager = nullptr;
-        std::unique_ptr<SManager> SManager = nullptr;
+        std::unique_ptr<ECManager> ecManager = nullptr;
+        std::unique_ptr<SManager> sManager = nullptr;
         // std::unique_ptr<EventManager> eventManager = nullptr;
         // ~Scene();
     };
