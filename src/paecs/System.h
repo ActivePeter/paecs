@@ -17,6 +17,7 @@ namespace paecs
     class System
     {
     public:
+        virtual System() {}
         virtual ~System() {}
 
         // what component types the system requires of entities (we can use this method in the constructor for example)

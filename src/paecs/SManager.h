@@ -19,26 +19,8 @@ namespace paecs
     public:
         SManager(Scene &scene1) : scene(scene1) {} // {}
 
-        template <typename T>
+        template <typename SysClass>
         void addSystem();
-
-        template <typename T, typename... Args>
-        void addSystem(Args &&...args);
-
-        template <typename T>
-        void removeSystem();
-
-        template <typename T>
-        T &getSystem();
-
-        template <typename T>
-        bool hasSystem() const;
-
-        // adds an entity to each system that is interested of the entity
-        void addToSystems(Entity e);
-
-        // removes an entity from interested systems' entity lists
-        void removeFromSystems(Entity e);
 
     private:
         Scene &scene;

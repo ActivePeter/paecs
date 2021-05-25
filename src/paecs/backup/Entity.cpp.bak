@@ -1,0 +1,79 @@
+#pragma once
+#include "Core.h"
+#include "Entity.h"
+#include "Component.h"
+#include "ComponentPool.h"
+#include "memory"
+
+namespace paecs
+{
+
+    // component //////////////////////////////////////////////////////
+    const ComponentMask &Entity::getComponentMask() const
+    {
+    }
+
+    template <typename T, typename... Args>
+    Entity &Entity::addComponent(Args &&...args)
+    {
+        T component(std::forward<Args>(args)...);
+        addComponent<T>(e, component);
+    }
+
+    // template <typename T>
+    // Entity &Entity::addComponent(T component)
+    // {
+    //     const auto componentId = Component<T>::getId();
+    //     const auto entityId = this->getIndex();
+
+    //     //根据类型获取到存储这一类型components的pool的指针
+    //     auto componentPool = ecManager.getComponentPoolOfT<T>();
+
+    //     //如果entityId比componentdVector的size大,那么扩大vector尺寸
+    //     if (entityId >= componentPool->getSize())
+    //     {
+    //         componentPool->resize(versions.size());
+    //     }
+
+    //     componentPool->set(entityId, component);
+    //     // componentMasks[entityId].set(componentId);
+    // }
+
+    template <typename T>
+    void Entity::removeComponent()
+    {
+        const auto componentId = Component<T>::getId();
+        const auto entityId = e.getIndex();
+        assert(entityId < componentMasks.size());
+        // ComponentMask[entityId].t
+        componentMasks[entityId].set(componentId, false); //mask 用来标记component是否有效
+    }
+
+    template <typename T>
+    bool Entity::hasComponent() const
+    {
+        const auto componentId = Component<T>::getId();
+        const auto entityId = e.getIndex();
+        assert(entityId < componentMasks.size());
+        // componentMasks[entityId].;
+        //.(componentId, false);
+        return componentMasks[entityId].test(componentId);
+    }
+
+    //获取该entity对应类型的component
+    template <typename T>
+    T &Entity::getComponent() const
+    {
+        const auto componentId = Component<T>::getId();
+        const auto entityId = e.getIndex();
+
+        assert(hasComponent<T>(e));
+        assert(componentId < componentPools.size());
+        // auto componentPool = std::static_pointer_cast<Pool<T>>(componentPools[componentId]);
+        auto componentPool = ecManager.getComponentPoolOfT<T>();
+
+        assert(componentPool);
+        assert(entityId < componentPool->getSize());
+        return componentPool->get(entityId);
+    }
+}
