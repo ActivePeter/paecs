@@ -12,21 +12,27 @@ namespace paecs_example
         B(int dx = 0, int dy = 0) : dx(dx), dy(dy) {}
         int dx, dy;
     };
+    struct C
+    {
+        C(int dx = 0, int dy = 0) : dx(dx), dy(dy) {}
+        int dx, dy;
+    };
 
     class HelloworldSystem : public paecs::System
     {
     public:
-        HelloworldSystem()
+        // HelloworldSystem(paecs::Scene scene)
+        void init() override
         {
-            requireComponent<A, B>();
+            requireComponent<A, B, C>();
         }
 
-        void update(Scene &scene)
+        void update(paecs::Scene &scene)
         {
-            scene.each(
-                [&](EntityID id, A &a, B &b)
+            scene.foreachComps(
+                [&](paecs::EntityID id, A &a, B &b)
                 {
-                    count++;
+                    // count++;
                 });
         }
     };
@@ -39,6 +45,15 @@ namespace paecs_example
             .createEntity()
             .addEmptyComponent<A>()
             .addEmptyComponent<B>();
+        ecsScene
+            .addSys<HelloworldSystem>();
+
+        while (1)
+        {
+            ecsScene.loop();
+            /* code */
+        }
+
         // .addComponent<A>();
 
         // ecsScene.addSys<HelloworldSystem>();

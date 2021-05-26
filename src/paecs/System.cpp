@@ -5,50 +5,63 @@
 
 namespace paecs
 {
-
-    void System::addEntity(Entity e)
+    template <typename FirsrCompType, typename... RestCompTypes>
+    void System::requireComponent()
     {
-        entities.push_back(e);
+        requireComponent<FirsrCompType>();
+        requireComponents<RestCompTypes>();
     }
 
-    void System::removeEntity(Entity e)
+    template <typename CompType>
+    void System::requireComponent()
     {
-        entities.erase(std::remove_if(entities.begin(), entities.end(),
-                                      [&e](Entity other)
-                                      { return e == other; }),
-                       entities.end());
+        const auto componentId = ComponentIdCounter<CompType>::getId();
+        componentMask.set(componentId);
     }
 
-    World &System::getWorld() const
-    {
-        assert(world != nullptr);
-        return *world;
-    }
+    // void System::addEntity(Entity e)
+    // {
+    //     entities.push_back(e);
+    // }
 
-    void SystemManager::addToSystems(Entity e)
-    {
-        const auto &entityComponentMask = world.getEntityManager().getComponentMask(e);
+    // void System::removeEntity(Entity e)
+    // {
+    //     entities.erase(std::remove_if(entities.begin(), entities.end(),
+    //                                   [&e](Entity other)
+    //                                   { return e == other; }),
+    //                    entities.end());
+    // }
 
-        for (auto &it : systems)
-        {
-            auto &system = it.second;
-            const auto &systemComponentMask = system->getComponentMask();
-            auto interest = (entityComponentMask & systemComponentMask) == systemComponentMask;
+    // World &System::getWorld() const
+    // {
+    //     assert(world != nullptr);
+    //     return *world;
+    // }
 
-            if (interest)
-            {
-                system->addEntity(e);
-            }
-        }
-    }
+    // void SystemManager::addToSystems(Entity e)
+    // {
+    //     const auto &entityComponentMask = world.getEntityManager().getComponentMask(e);
 
-    void SystemManager::removeFromSystems(Entity e)
-    {
-        for (auto &it : systems)
-        {
-            auto &system = it.second;
-            system->removeEntity(e);
-        }
-    }
+    //     for (auto &it : systems)
+    //     {
+    //         auto &system = it.second;
+    //         const auto &systemComponentMask = system->getComponentMask();
+    //         auto interest = (entityComponentMask & systemComponentMask) == systemComponentMask;
+
+    //         if (interest)
+    //         {
+    //             system->addEntity(e);
+    //         }
+    //     }
+    // }
+
+    // void SystemManager::removeFromSystems(Entity e)
+    // {
+    //     for (auto &it : systems)
+    //     {
+    //         auto &system = it.second;
+    //         system->removeEntity(e);
+    //     }
+    // }
 
 }

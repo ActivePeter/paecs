@@ -28,36 +28,7 @@ struct VelocityComponent
 };
 ```
 
-### ~~2.然后是添加system~~ 后面重新设计了system
 
-```c++
-world.getSystemManager().addSystem<MoveSystem>();
-```
-
-对应的要先写system的类
-
-```c++
-class MoveSystem : public System
-{
-public:
-    MoveSystem()
-    {
-        requireComponent<PositionComponent>();
-        requireComponent<VelocityComponent>(); 
-    }
-	
-    void update(ECManager ecm )
-    {
-        for (auto e : getEntities()) {
-            auto &position = e.getComponent<PositionComponent>();
-            const auto velocity = e.getComponent<VelocityComponent>();
-            position.x += velocity.x;
-            position.y += velocity.y;
-        }
-    }
-};
-
-```
 
 ### 3.考虑一个问题 system如何去获取需要的component 对的
 
@@ -82,7 +53,7 @@ public:
 
 目前来看的话数据的结构大概就是这样的
 
-```
+```c++
 struct Archtype<A,B,...>{//某一类set的所有chunk
 	SetDescription<A,B> setDesc;
 	list<Chunk> chunks;
@@ -125,71 +96,157 @@ struct ComponentArray {
 
 然后要考虑的是。如何设计system以及system过滤出需要的archtype
 
+
+
 ### 5.实现addSystem函数
 
 system是一个每帧（或特定时段）被调用的函数
 
-形如
+> 理想的模式是这样的：
+>
+> 形如
+>
+> ```c++
+> void helloworld(A a,B b){
+>     
+> }
+> void helloworld2(A a,B b,C c){
+>     
+> }
+> main(){
+>     addSys(helloworld);
+> 	addSys(helloworld2);
+>     while(1){
+>         runSys();
+>     }
+> }
+> 
+> ```
+>
+> 这样的形式便让我们可以获取到需要的需要的组件AB的迭代器。然后对他们进行遍历
+>
+> iter元素有 Entity，A，B
+>
+> 
+>
+> 这个函数需要被注册，那么我们要写一个addSystem函数
+>
+> addSystem函数的参数是helloworld，那么问题来了，addSystem时我们需要生成一个对应system涉及到的component的过滤器10001这样的mask，表示对哪些component感兴趣，以便后续生成迭代器（archtype 跟这个过滤器做位运算，获取到符合过滤器的archtypes，
+>
+> 还有一个问题是存储systems。c++ 怎么存储不同类型的函数到一个列表里
+
+因为这些问题，我先选择使用较为容易实现的方法（其实一点也不容易
+
+核心代码：
 
 ```c++
-void helloworld(A a,B b){
-    
-}
-void helloworld2(A a,B b,C c){
-    
-}
-main(){
-    addSys(helloworld);
-	addSys(helloworld2);
-    while(1){
-        runSys();
-    }
-}
-
-```
-
-这样的形式便让我们可以获取到需要的需要的组件AB的迭代器。然后对他们进行遍历
-
-iter元素有 Entity，A，B
-
-
-
-这个函数需要被注册，那么我们要写一个addSystem函数
-
-addSystem函数的参数是helloworld，那么问题来了，addSystem时我们需要生成一个对应system涉及到的compone的过滤器10001这样的bitset，表示对哪些component感兴趣，以便后续生成迭代器（archtype 跟这个过滤器做位运算，获取到符合过滤器的archtypes，
-
-
-
-还有一个问题是存储systems。c++ 怎么存储不同类型的函数到一个列表里
-
-1.将函数放在类里，一个类作为一个System
-
-以下是经过了一整天苦思冥想得出的
-
-```c++
-void system1(Scene &scene)
+template <typename SysClass>
+Scene &Scene::addSys()
 {
-    scene.each([&](EntityID id, A &a, B &b)
-               { count++; });
-}
+    if (hasSys<SysClass>())
+    {
+        goto end;
+    }
 
+    std::shared_ptr<SysClass> system(new SysClass);
+    systems.insert(std::make_pair(std::type_index(typeid(SysClass)), system));
+    end:
+    return this;
+}
 ```
 
-这个时候addsystem做的事情就是 
+调用代码：
 
 ```c++
-//template <typename T>
-void Scene::addSystem(func f1)
+struct A
 {
-    if (hasSystem(f1)) {//判断是否有system 
-        return;
+    A(int x = 0, int y = 0) : x(x), y(y) {}
+    int x, y;
+};
+
+struct B
+{
+    B(int dx = 0, int dy = 0) : dx(dx), dy(dy) {}
+    int dx, dy;
+};
+
+class HelloworldSystem : public paecs::System
+{
+    public:
+    HelloworldSystem()
+    {
+        requireComponent<A, B>();
     }
-	
-    f1存入函数指针的vector
-    //system->world = &world;
-    //systems.insert(std::make_pair(std::type_index(typeid(T)), system));
+
+    void update(Scene &scene)
+    {
+        scene.each(
+            [&](EntityID id, A &a, B &b)
+            {
+                count++;
+            });
+    }
+};
+
+void main()
+{
+    auto ecsScene = *(paecs::createScene());
+
+    ecsScene
+        .createEntity()
+        .addEmptyComponent<A>()
+        .addEmptyComponent<B>();
+    ecsScene
+        .addSys<HelloworldSystem>();
+    // .addComponent<A>();
+
+    // ecsScene.addSys<HelloworldSystem>();
 }
-
-
 ```
 
+### 6.ComponentMask
+
+这个玩意需要在两个地方存在，一个是System创建的时候；一个是创建archtype(插件组类型)时候
+
+system我参考下mix
+
+```c++
+/*
+    * 这部分代码用来获取component类型对应的id，以用于生成mask
+    */
+
+    // Used to be able to assign unique ids to each component type.
+    struct BaseComponentIdCounter
+    {
+        using Id = uint8_t;
+        // static const Id MaxComponents = config::MAX_COMPONENTS;
+
+    protected:
+        static Id nextId; //静态全局量,每次递增
+    };
+
+    // Used to assign a unique id to a component type, we don't really have to make our components derive from this though.
+    template <typename T>
+    struct ComponentIdCounter : BaseComponent
+    {
+        // Returns the unique id of Component<T>
+        static Id getId()
+        {
+            static auto id = nextId++; //只有第一次调用会执行赋值,后续都是记忆之前的数据,
+            // if(id==MaxComponents)
+            // assert(id < MaxComponents);
+            return id;
+        }
+    };
+
+    // Used to keep track of which components an entity has and also which entities a system is interested in.
+    using ComponentMask = std::bitset<config::MAX_COMPONENTS>; //<total size>
+```
+
+每次新的不同类型都会nextId+1，
+
+### 7.Archtype<...T>具体实现
+
+chunk是一个单位，他的内存可以在任意的位置创建，所以我们 给每个archtype<...T>一个空的list
+
+当有新的entity创建时候，会需要一个archtype并在里面记录数据，则这个archtype

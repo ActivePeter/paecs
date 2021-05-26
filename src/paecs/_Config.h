@@ -10,5 +10,6 @@ namespace paecs
         static const uint32_t VERSION_BITS = 8;
         static const uint32_t MAX_COMPONENTS = 64;
         static const uint32_t DEFAULT_POOL_SIZE = 100;
+        static const uint32_t ChunkSize = 16 * 1024; //16K
     }
 }

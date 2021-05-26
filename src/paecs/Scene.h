@@ -40,6 +40,7 @@ namespace paecs
 
         // std::unique_ptr<EventManager> eventManager = nullptr;
         // ~Scene();
+        void loop();
     };
 
     std::unique_ptr<Scene> createScene();
