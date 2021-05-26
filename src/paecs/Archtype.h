@@ -1,7 +1,7 @@
 #pragma once
 #include "Core.h"
 #include <memory>
-#include "ComponentIdCounter.h"
+#include "ComponentMask.h"
 #include "Scene.h"
 
 namespace paecs
@@ -28,13 +28,14 @@ namespace paecs
     { //某一类set的所有信息
     private:
         // static std::shared_ptr<Archtype<CompTypes>> singleCase;
-        static ComponentMask componentMask;
+        ComponentMask componentMask;
 
     public:
-        // Archtype()
-        // {
-        //     maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
-        // }
+        Archtype(const ComponentMask &componentMask1)
+        {
+            componentMask = componentMask1;
+            // maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
+        }
         // static std::shared_ptr<Archtype<CompTypes>> getSingleCase()
         // {
         //     if (singleCase == nullptr)
@@ -47,7 +48,7 @@ namespace paecs
         int maxCnt;
         int offset;
         // SetDescription<CompTypes> setDesc;
-        list<Chunk> chunks; //空list
+        std::list<Chunk> chunks; //空list
     };
     struct Chunk
     { //chunk的数据结构
@@ -57,8 +58,8 @@ namespace paecs
     class ArchtypeManager
     {
     public:
-        template <typename... CompTypes>
-        Archtype &findOrCreateArchtype();
+        // template <typename... CompTypes>
+        Archtype &findOrCreateArchtype(const ComponentMask &cm);
 
         ArchtypeManager(Scene &scene1) : scene(scene1)
         {
@@ -66,6 +67,7 @@ namespace paecs
 
     private:
         Scene &scene;
+        phmap::flat_hash_map<ComponentMask, std::shared_ptr<Archtype>> archtypes;
     };
     // template <typename... CompTypes>
     // struct SetDescription

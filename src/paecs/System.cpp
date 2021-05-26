@@ -9,7 +9,7 @@ namespace paecs
     void System::requireComponent()
     {
         requireComponent<FirsrCompType>();
-        requireComponents<RestCompTypes>();
+        requireComponent<RestCompTypes...>();
     }
 
     template <typename CompType>
