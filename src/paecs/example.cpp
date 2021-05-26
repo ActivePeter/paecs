@@ -30,8 +30,7 @@ namespace paecs_example
         void update(paecs::Scene &scene)
         {
             scene.foreachComps(
-                [&](paecs::EntityID id, A &a, B &b)
-                {
+                [&](paecs::EntityID id, A &a, B &b) {
                     // count++;
                 });
         }
@@ -39,7 +38,7 @@ namespace paecs_example
 
     void main()
     {
-        auto ecsScene = *(paecs::createScene());
+        auto &ecsScene = *(paecs::createScene());
 
         ecsScene
             .createEntity()
@@ -58,4 +57,4 @@ namespace paecs_example
 
         // ecsScene.addSys<HelloworldSystem>();
     }
-}
+} // namespace paecs_example

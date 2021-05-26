@@ -9,6 +9,7 @@
 #include "Core.h"
 #include "System.h"
 #include "Entity.h"
+#include "Archtype.h"
 
 namespace paecs
 {
@@ -17,6 +18,7 @@ namespace paecs
     {
     private:
         phmap::flat_hash_map<std::type_index, std::shared_ptr<System>> systems;
+
         // std::unique_ptr<Entity> = nullptr;
         // std::unique_ptr<SManager> sManager = nullptr;
         /* data */
@@ -41,6 +43,7 @@ namespace paecs
         // std::unique_ptr<EventManager> eventManager = nullptr;
         // ~Scene();
         void loop();
+        ArchtypeManager archtypeManager(*this);
     };
 
     std::unique_ptr<Scene> createScene();

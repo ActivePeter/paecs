@@ -1,6 +1,8 @@
 #pragma once
 #include "Core.h"
 #include <memory>
+#include "ComponentIdCounter.h"
+#include "Scene.h"
 
 namespace paecs
 {
@@ -20,25 +22,27 @@ namespace paecs
     // 			}();
     // 			return mt;
     // 		}
-    template <typename... CompTypes>
+
+    // template <typename... CompTypes>
     class Archtype
     { //某一类set的所有信息
     private:
-        static std::shared_ptr<Archtype<CompTypes>> singleCase;
+        // static std::shared_ptr<Archtype<CompTypes>> singleCase;
+        static ComponentMask componentMask;
 
     public:
-        Archtype()
-        {
-            maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
-        }
-        static std::shared_ptr<Archtype<CompTypes>> getSingleCase()
-        {
-            if (singleCase == nullptr)
-            {
-                std::make_shared<Archtype<CompTypes>>();
-            }
-            return singleCase;
-        }
+        // Archtype()
+        // {
+        //     maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
+        // }
+        // static std::shared_ptr<Archtype<CompTypes>> getSingleCase()
+        // {
+        //     if (singleCase == nullptr)
+        //     {
+        //         std::make_shared<Archtype<CompTypes>>();
+        //     }
+        //     return singleCase;
+        // }
 
         int maxCnt;
         int offset;
@@ -48,6 +52,20 @@ namespace paecs
     struct Chunk
     { //chunk的数据结构
         uint8_t storage[config::ChunkSize];
+    };
+
+    class ArchtypeManager
+    {
+    public:
+        template <typename... CompTypes>
+        Archtype &findOrCreateArchtype();
+
+        ArchtypeManager(Scene &scene1) : scene(scene1)
+        {
+        }
+
+    private:
+        Scene &scene;
     };
     // template <typename... CompTypes>
     // struct SetDescription
@@ -126,4 +144,4 @@ namespace paecs
     //     create_chunk_for_archetype(newArch);
     //     return newArch;
     // }
-}
+} // namespace paecs
