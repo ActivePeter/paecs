@@ -68,7 +68,9 @@ namespace paecs
 
     private:
         Scene &scene;
-        phmap::flat_hash_map<ComponentMask, std::shared_ptr<Archtype>> archtypes;
+        // phmap::flat_hash_map<ComponentMask, std::shared_ptr<Archtype>> archtypes;
+        vector<ComponentMask> archtypeComponentMasks;
+        vector<std::shared_ptr<Archtype>> archtypes;
     };
     // template <typename... CompTypes>
     // struct SetDescription

@@ -23,16 +23,17 @@ namespace paecs
     // template <typename... CompTypes>
     Archtype &ArchtypeManager::findOrCreateArchtypeMatchMask(const ComponentMask &cm)
     {
-        if (archtypes.contains(cm))
-        {
-            return *archtypes[cm];
-        }
-        else
-        {
-            auto newArchtype = std::make_shared<Archtype>(cm);
-            archtypes[cm] = (newArchtype);
-            return *newArchtype;
-        }
+        if (archtypeComponentMasks.)
+        // if (archtypes.contains(cm))
+        // {
+        //     return *archtypes[cm];
+        // }
+        // else
+        // {
+        //     auto newArchtype = std::make_shared<Archtype>(cm);
+        //     archtypes[cm] = (newArchtype);
+        //     return *newArchtype;
+        // }
         //计算chunk最大容量
         // auto maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
     }
