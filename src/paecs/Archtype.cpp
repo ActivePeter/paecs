@@ -36,6 +36,10 @@ namespace paecs
         //计算chunk最大容量
         // auto maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
     }
+    std::vector<std::shared_ptr<Archtype>> 
+    ArchtypeManager::findArchtypeContainingMask(const ComponentMask &cm){
+
+    }
     /**
     * 在decs中
     * 通过vector来存储archtype的标识（用于查找匹配
