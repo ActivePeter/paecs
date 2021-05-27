@@ -8,8 +8,9 @@
 
 namespace paecs
 {
-    using ComponentMaskCell = std::bitset<config::MAX_COMPONENTS>;
-    using ComponentMask = std::vector<ComponentMaskCell>; //<total size>
+    // using ComponentMaskCell = std::bitset<config::MAX_COMPONENTS>;
+    // using ComponentMask = std::vector<ComponentMaskCell>; //<total size>
+    using ComponentMask = std::vector<std::bitset<config::MAX_COMPONENTS>>; //<total size>
     const uint32_t ComponentMaskCellSize = config::MAX_COMPONENTS;
     //对componentMask的操作有：改变长度，与操作
     namespace ComponentMaskFuncs

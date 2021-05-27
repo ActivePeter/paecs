@@ -21,6 +21,8 @@ namespace paecs
     // 		}
 
     // template <typename... CompTypes>
+
+    //生成entity时需要做的操作
     Archtype &ArchtypeManager::findOrCreateArchtypeMatchMask(const ComponentMask &cm)
     {
         int foundIndex = -1;
@@ -56,10 +58,19 @@ namespace paecs
         //计算chunk最大容量
         // auto maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
     }
-    std::list<std::shared_ptr<Archtype>>
+    std::vector<std::shared_ptr<Archtype>>
     ArchtypeManager::findArchtypeContainingMask(const ComponentMask &cm)
     {
-        
+        std::vector<std::shared_ptr<Archtype>> foundedList;
+        auto archtypeCnt = archtypeComponentMasks.size();
+        for (int i = 0; i < archtypeCnt; i++)
+        {
+            if (ComponentMaskFuncs::MaskAContainsMaskB(archtypeComponentMasks[i], cm))
+            {
+                foundedList.push_back(archtypes[i]);
+            }
+        }
+        return foundedList;
     }
     /**
     * 在decs中
