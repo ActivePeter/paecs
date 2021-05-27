@@ -60,7 +60,7 @@ namespace paecs
     public:
         // template <typename... CompTypes>
         Archtype &findOrCreateArchtypeMatchMask(const ComponentMask &cm);
-        std::vector<std::shared_ptr<Archtype>> findArchtypeContainingMask(const ComponentMask &cm);
+        std::list<std::shared_ptr<Archtype>> findArchtypeContainingMask(const ComponentMask &cm);
 
         ArchtypeManager(Scene &scene1) : scene(scene1)
         {
@@ -69,8 +69,13 @@ namespace paecs
     private:
         Scene &scene;
         // phmap::flat_hash_map<ComponentMask, std::shared_ptr<Archtype>> archtypes;
-        vector<ComponentMask> archtypeComponentMasks;
-        vector<std::shared_ptr<Archtype>> archtypes;
+        std::vector<ComponentMask> archtypeComponentMasks;
+        std::vector<std::shared_ptr<Archtype>> archtypes;
+
+        inline std::shared_ptr<Archtype> createArchtypeWithComponentMask(const ComponentMask &cm)
+        {
+            return std::make_shared<Archtype>(cm);
+        }
     };
     // template <typename... CompTypes>
     // struct SetDescription

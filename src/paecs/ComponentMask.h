@@ -8,11 +8,36 @@
 
 namespace paecs
 {
-    using ComponentMask = std::vector<std::bitset<config::MAX_COMPONENTS>>; //<total size>
+    using ComponentMaskCell = std::bitset<config::MAX_COMPONENTS>;
+    using ComponentMask = std::vector<ComponentMaskCell>; //<total size>
     const uint32_t ComponentMaskCellSize = config::MAX_COMPONENTS;
     //对componentMask的操作有：改变长度，与操作
     namespace ComponentMaskFuncs
     {
+        inline bool MaskAContainsMaskB(const ComponentMask &maskA, const ComponentMask &maskB)
+        {
+            auto maskASize = maskA.size();
+            if (maskASize != maskB.size())
+            {
+                return false;
+            }
+            else
+            {
+                // bool result=true;
+                for (int i = 0; i < maskASize; i++)
+                {
+                    auto &cellA = maskA[i];
+                    auto &cellB = maskB[i];
+
+                    if (cellA & cellB != cellB)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            // for(int i=ComponentMask;i<1)
+        }
         void getEmptyMask(ComponentMask &cm)
         {
 
