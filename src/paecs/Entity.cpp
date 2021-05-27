@@ -1,8 +1,8 @@
 #pragma once
 #include "Core.h"
 #include "Entity.h"
-#include "Component.h"
-#include "ComponentPool.h"
+// #include "Component.h"
+// #include "ComponentPool.h"
 #include "memory"
 
 namespace paecs
@@ -28,43 +28,44 @@ namespace paecs
     {
         auto id = this->entityId;
         /**
-        * 分析：
-        * 每个component类型都要有一个下标，这个下标是自增的，实现方法还没有做分析
-        * 然后我们的 archtype 可以根据 components的下标生成一个Mask（bitset），这个mask是对应于某类archtype全局唯一的，
-        * 这个Mask即可拿来跟system的ComponentMask做比对，而system的ComponentMask一样也是全局唯一的
+         * 这里开始就是具体的archrtype查找或创建了，因为会添加插件
+         * 一开始entity指向的chunk是空的，因为还没有插件，所以没有archtype信息
+         * 如果有，就能获取到ComponentMask，然后再跟新加的Component对应的Component合并，
+         * 通过合并后的ComponentMask去查找或创建对应的Archtype
+         * 查找到archtype后要做的是获取一个chunk并且标记新的位置用于存这个entity的数据，
         **/
         //未分析
         // const Metatype *temporalMetatypeArray[32];
 
         // const Metatype *type = get_metatype<CompType>();
 
-        Archetype *oldarch = get_entity_archetype(scene, id);
-        ChunkComponentList *oldlist = oldarch->componentList;
-        bool typeFound = false;
-        int lenght = oldlist->components.size();
-        for (int i = 0; i < oldlist->components.size(); i++)
-        {
-            temporalMetatypeArray[i] = oldlist->components[i].type;
+        // Archetype *oldarch = get_entity_archetype(scene, id);
+        // ChunkComponentList *oldlist = oldarch->componentList;
+        // bool typeFound = false;
+        // int lenght = oldlist->components.size();
+        // for (int i = 0; i < oldlist->components.size(); i++)
+        // {
+        //     temporalMetatypeArray[i] = oldlist->components[i].type;
 
-            //the pointers for metatypes are allways fully stable
-            if (temporalMetatypeArray[i] == type)
-            {
-                typeFound = true;
-            }
-        }
+        //     //the pointers for metatypes are allways fully stable
+        //     if (temporalMetatypeArray[i] == type)
+        //     {
+        //         typeFound = true;
+        //     }
+        // }
 
-        Archetype *newArch = oldarch;
-        if (!typeFound)
-        {
+        // Archetype *newArch = oldarch;
+        // if (!typeFound)
+        // {
 
-            temporalMetatypeArray[lenght] = type;
-            sort_metatypes(temporalMetatypeArray, lenght + 1);
-            lenght++;
+        //     temporalMetatypeArray[lenght] = type;
+        //     sort_metatypes(temporalMetatypeArray, lenght + 1);
+        //     lenght++;
 
-            newArch = find_or_create_archetype(scene, temporalMetatypeArray, lenght);
+        //     newArch = find_or_create_archetype(scene, temporalMetatypeArray, lenght);
 
-            set_entity_archetype(newArch, id);
-        }
+        //     set_entity_archetype(newArch, id);
+        // }
     }
 }
 

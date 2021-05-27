@@ -10,6 +10,7 @@
 #include "System.h"
 #include "Entity.h"
 #include "Archtype.h"
+#include "EntityManager.h"
 
 namespace paecs
 {
@@ -22,6 +23,10 @@ namespace paecs
         // std::unique_ptr<Entity> = nullptr;
         // std::unique_ptr<SManager> sManager = nullptr;
         /* data */
+
+        ArchtypeManager archtypeManager = ArchtypeManager(*this);
+        EntityManager entityManager = EntityManager(*this);
+
     public:
         Scene(/* args */);
         // ECManager &getEntityManager() const;
@@ -43,7 +48,6 @@ namespace paecs
         // std::unique_ptr<EventManager> eventManager = nullptr;
         // ~Scene();
         void loop();
-        ArchtypeManager archtypeManager(*this);
     };
 
     std::unique_ptr<Scene> createScene();

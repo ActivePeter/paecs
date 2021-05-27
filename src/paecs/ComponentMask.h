@@ -30,7 +30,7 @@ namespace paecs
                     auto &cellA = maskA[i];
                     auto &cellB = maskB[i];
 
-                    if (cellA & cellB != cellB)
+                    if ((cellA & cellB) != cellB) //。。。。与操作要括起来
                     {
                         return false;
                     }

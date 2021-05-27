@@ -52,4 +52,9 @@ namespace paecs
         return std::make_unique<Scene>();
     }
 
+    template <typename... Comps>
+    inline EntityController Scene::createEntity()
+    {
+        return entityManager.createEntity();
+    }
 }

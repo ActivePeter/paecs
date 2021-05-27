@@ -24,6 +24,8 @@ namespace paecs
     // 		}
 
     // template <typename... CompTypes>
+
+    //使用std::vector<std::shared_ptr<Archtype>>管理
     class Archtype
     { //某一类set的所有信息
     private:
@@ -48,8 +50,12 @@ namespace paecs
         int maxCnt;
         int offset;
         // SetDescription<CompTypes> setDesc;
-        std::list<Chunk> chunks; //空list
+        std::list<std::shared_ptr<Chunk>> chunks; //空list
     };
+    // Archtype a;
+    // void f(){
+    //     a.chunks.push_front()
+    // }
     struct Chunk
     { //chunk的数据结构
         uint8_t storage[config::ChunkSize];

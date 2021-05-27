@@ -11,16 +11,27 @@ namespace paecs
         uint32_t index;
         uint32_t generation;
     };
-
+    struct EntityDataPos
+    {
+        std::shared_ptr<Chunk> chunkPtr;
+        uint32_t index;
+        EntityDataPos(
+            std::shared_ptr<Chunk> chunkPtr1,
+            uint32_t index1)
+            : chunkPtr(chunkPtr1),
+              index(index1){};
+    };
     class EntityController
     {
     private:
-        Scene &scene;
+        EntityManager &entityManager;
         EntityID entityId;
         /* data */
     public:
-        EntityController(Scene &scene1, EntityID entityId1) : scene(scene1),
-                                                              entityId(entityId1) {}
+        EntityController(
+            EntityManager &entityManager,
+            EntityID entityId1) : entityManager(entityManager),
+                                  entityId(entityId1) {}
         // template <typename CompType>
         // EntityController addComponent(CompType &comp);
 
