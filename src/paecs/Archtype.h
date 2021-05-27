@@ -59,7 +59,8 @@ namespace paecs
     {
     public:
         // template <typename... CompTypes>
-        Archtype &findOrCreateArchtype(const ComponentMask &cm);
+        Archtype &findOrCreateArchtypeMatchMask(const ComponentMask &cm);
+        std::vector<std::shared_ptr<Archtype>> findArchtypeContainMask(const ComponentMask &cm);
 
         ArchtypeManager(Scene &scene1) : scene(scene1)
         {

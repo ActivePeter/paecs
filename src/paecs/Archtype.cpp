@@ -21,7 +21,7 @@ namespace paecs
     // 		}
 
     // template <typename... CompTypes>
-    Archtype &ArchtypeManager::findOrCreateArchtype(const ComponentMask &cm)
+    Archtype &ArchtypeManager::findOrCreateArchtypeMatchMask(const ComponentMask &cm)
     {
         if (archtypes.contains(cm))
         {
