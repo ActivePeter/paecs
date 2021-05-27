@@ -4,6 +4,7 @@ namespace paecs
     template <typename... Comps>
     inline EntityController Scene::createEntity()
     {
+         
         // Archetype *arch = nullptr;
         // //empty component list will use the hardcoded null archetype
         // if constexpr (sizeof...(Comps) != 0)

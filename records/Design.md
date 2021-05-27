@@ -245,8 +245,10 @@ system我参考下mix
 
 每次新的不同类型都会nextId+1，
 
-### 7.Archtype<...T>具体实现
+### 7.Archtype 具体实现
 
 chunk是一个单位，他的内存可以在任意的位置创建，所以我们 给每个archtype<...T>一个空的list
 
 当有新的entity创建时候，会需要一个archtype并在里面记录数据，则这个archtype
+
+### 8.
