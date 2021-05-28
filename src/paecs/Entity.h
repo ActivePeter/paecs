@@ -26,12 +26,17 @@ namespace paecs
     private:
         EntityManager &entityManager;
         EntityID entityId;
+        std::shared_ptr<EntityDataPos> entityDataPos;
         /* data */
     public:
         EntityController(
-            EntityManager &entityManager,
-            EntityID entityId1) : entityManager(entityManager),
-                                  entityId(entityId1) {}
+            EntityManager &entityManager1,
+            EntityID entityId1,
+            const std::shared_ptr<EntityDataPos> &entityDataPos1) : entityManager(entityManager1),
+                                                                    entityId(entityId1),
+                                                                    entityDataPos(entityDataPos1)
+        {
+        }
         // template <typename CompType>
         // EntityController addComponent(CompType &comp);
 

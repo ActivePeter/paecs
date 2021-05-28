@@ -46,7 +46,9 @@ namespace paecs
         //     }
         //     return singleCase;
         // }
-
+        void registMemForAnEntity()
+        {
+                }
         int maxCnt;
         int offset;
         // SetDescription<CompTypes> setDesc;

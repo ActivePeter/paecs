@@ -15,9 +15,9 @@ namespace paecs
             entityId.index = nextEntityId;
             nextEntityId++;
         }
-        //先archtype
-        entityId2Data_Map[entityId] = EntityDataPos(nullptr, 0);
-        return EntityController(*this, entityId);
+        auto newEntityDataPtr = std::make_shared<EntityDataPos>(nullptr, 0);
+        entityId2Data_Map[entityId] = newEntityDataPtr;
+        return EntityController(*this, entityId, newEntityDataPtr);
         //
         /**
          * 首先要理解清楚entity的作用，

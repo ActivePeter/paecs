@@ -31,9 +31,26 @@ namespace paecs
          * 这里开始就是具体的archrtype查找或创建了，因为会添加插件
          * 一开始entity指向的chunk是空的，因为还没有插件，所以没有archtype信息
          * 如果有，就能获取到ComponentMask，然后再跟新加的Component对应的Component合并，
+         * 如果没有就直接获取新新加的componentMask
          * 通过合并后的ComponentMask去查找或创建对应的Archtype
          * 查找到archtype后要做的是获取一个chunk并且标记新的位置用于存这个entity的数据，
         **/
+        ComponentMask cm; //存储最终合并的componentMask
+        ComponentMaskFuncs::getComponentMaskOfComps<CompType>(cm);
+        auto &am = this->entityManager.scene.archtypeManager;
+
+        if (this->entityDataPos->chunkPtr == nullptr)
+        {
+            goto _newArchtypeOperation;
+        }
+        else
+        {
+        }
+
+    _newArchtypeOperation:
+
+        auto &targetArchtype = am.createArchtypeWithComponentMask(cm);
+
         //未分析
         // const Metatype *temporalMetatypeArray[32];
 

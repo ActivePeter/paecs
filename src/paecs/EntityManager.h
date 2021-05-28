@@ -5,12 +5,12 @@ namespace paecs
 {
     class EntityManager
     {
-        Scene &scene;
 
     public:
         EntityManager(Scene &scene1) : scene(scene1) {}
         EntityController createEntity();
         void deleteEntity(EntityID entityId);
+        Scene &scene;
 
     private:
         //规定：从头部加入,从尾部取出
@@ -21,6 +21,6 @@ namespace paecs
          * chunk指针，在chunk中的index,
          * 由此可以知道chunk中需要取出一部分信息用于包含archtype的指针，才能保留他的类型信息，
          **/
-        phmap::flat_hash_map<EntityID, EntityDataPos> entityId2Data_Map;
+        phmap::flat_hash_map<EntityID, std::shared_ptr<EntityDataPos>> entityId2Data_Map;
     };
 }
