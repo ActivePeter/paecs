@@ -3,6 +3,7 @@
 #include <memory>
 #include "ComponentMask.h"
 #include "Scene.h"
+#include "Component.h"
 
 namespace paecs
 {
@@ -33,9 +34,15 @@ namespace paecs
         ComponentMask componentMask;
 
     public:
-        Archtype(const ComponentMask &componentMask1)
+        Archtype(const ComponentMask &componentMask1,
+                 std::vector<int> componentsIds1,
+                 std::vector<int> componentsOffsets1,
+                 int maxCnt1)
         {
             componentMask = componentMask1;
+            componentsIds = componentsIds1;
+            componentsOffsets = componentsOffsets1;
+            maxCnt = maxCnt1;
             // maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
         }
         // static std::shared_ptr<Archtype<CompTypes>> getSingleCase()
@@ -48,9 +55,15 @@ namespace paecs
         // }
         void registMemForAnEntity()
         {
-                }
+            auto componentCnt = componentsIds.size();
+            for (int i = 0; i < componentCnt; i++)
+            {
+            }
+        }
+        std::vector<BaseComponent::Id> componentsIds;
+        std::vector<int> componentsOffsets;
         int maxCnt;
-        int offset;
+        // int offset;
         // SetDescription<CompTypes> setDesc;
         std::list<std::shared_ptr<Chunk>> chunks; //空list
     };
@@ -58,6 +71,8 @@ namespace paecs
     // void f(){
     //     a.chunks.push_front()
     // }
+
+    //chunk应该还要存一个指向archtype的指针
     struct Chunk
     { //chunk的数据结构
         uint8_t storage[config::ChunkSize];
@@ -66,10 +81,10 @@ namespace paecs
     class ArchtypeManager
     {
     public:
-        // template <typename... CompTypes>
-        Archtype &findOrCreateArchtypeMatchMask(const ComponentMask &cm);
+        template <typename NewComp>
+        Archtype &findOrCreateArchtype(const ComponentMask &cm);
         std::vector<std::shared_ptr<Archtype>> findArchtypeContainingMask(const ComponentMask &cm);
-
+        // std::vector<Archtype> findArchtypeContainingMask(const ComponentMask &cm);
         ArchtypeManager(Scene &scene1) : scene(scene1)
         {
         }
@@ -78,12 +93,16 @@ namespace paecs
         Scene &scene;
         // phmap::flat_hash_map<ComponentMask, std::shared_ptr<Archtype>> archtypes;
         std::vector<ComponentMask> archtypeComponentMasks;
-        std::vector<std::shared_ptr<Archtype>> archtypes;
 
-        inline std::shared_ptr<Archtype> createArchtypeWithComponentMask(const ComponentMask &cm)
-        {
-            return std::make_shared<Archtype>(cm);
-        }
+        //使用指针的原因是之后获取一组archtype可以直接创建同类型的vector
+        //如果用的是直接数据，那读取出来还要取指针装入一个新的vector
+        std::vector<std::shared_ptr<Archtype>> archtypes;
+        // std::vector<Archtype> archtypes;
+
+        // inline std::shared_ptr<Archtype> createArchtypeWithComponentMask(const ComponentMask &cm)
+        // {
+        //     return std::make_shared<Archtype>(cm);
+        // }
     };
     // template <typename... CompTypes>
     // struct SetDescription

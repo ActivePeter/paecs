@@ -288,3 +288,10 @@ entityId
 这么一想好像entityId有必要了，它用于保证entity变更后（删除 或 添加删除组件，）依然可以被查询到
 
 并且需要标记generation，表示已经是删除后重新生成的entity了
+
+#### createArchtype（ComponentMask cm，Component） 
+
+这个函数用来根据给定的ComponentMask创建 archtype，但突然想到这个只是描述了有哪些插件，以便跟别的archtype做区分，但是还缺少一个对archtype中每个Component大小的描述，在archtype下还需要放每个插件的ids[] offsets[] 还有maxCnt
+
+还要建立一个 ComponentId->ComponentDiscription的map
+

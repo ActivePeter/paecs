@@ -45,11 +45,12 @@ namespace paecs
         }
         else
         {
+            //cm跟原本的mask还要做合并
         }
 
     _newArchtypeOperation:
 
-        auto &targetArchtype = am.createArchtypeWithComponentMask(cm);
+        auto &targetArchtype = am.findOrCreateArchtype(cm); //am.createArchtypeWithComponentMask(cm);
 
         //未分析
         // const Metatype *temporalMetatypeArray[32];
