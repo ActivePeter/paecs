@@ -7,11 +7,14 @@
 
 namespace paecs
 {
+    //每个entity的唯一标识
     struct EntityID
     {
         uint32_t index;
-        uint32_t generation;
+        uint32_t generation; //销毁后创建+1，用于区分
     };
+
+    //存储entity的区块指针以及在区块中的index
     struct EntityDataPos
     {
         // public:
@@ -19,6 +22,7 @@ namespace paecs
         //使用指针的原因   entity为空插件时不指向任何的chunk
         std::shared_ptr<Chunk> chunkPtr;
         uint32_t index;
+
         EntityDataPos(
             std::shared_ptr<Chunk> chunkPtr1,
             // Chunk &chunkRef1,
@@ -28,6 +32,10 @@ namespace paecs
               index(index1){
                   // chunkPtr = std::shared_ptr<Chunk>(&chunkRef1);
               };
+        uint8_t *getCompDataHeadPtr(int compOffset, size_t compSize)
+        {
+            return &chunkPtr->storage[compOffset + index * compSize];
+        }
     };
     class EntityController
     {
@@ -52,6 +60,9 @@ namespace paecs
 
         template <typename CompType>
         EntityController addEmptyComponent();
+
+        template <typename CompType>
+        EntityController removeComponent();
     };
 
     // // class ECManager;

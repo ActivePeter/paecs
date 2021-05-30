@@ -9,22 +9,6 @@
 
 namespace paecs
 {
-    // template <typename CompType>
-    // EntityController EntityController::addComponent(CompType &comp)
-    // {
-    //     //未分析
-    //     const Metatype *type = get_metatype<CompType>();
-
-    //     // add_component_to_entity<CompType>(world, id);
-    //     addEmptyComponent<CompType>();
-
-    //     //optimize later
-    //     if (!type->is_empty())
-    //     {
-    //         get_entity_component<CompType>(world, id) = comp;
-    //     }
-    // }
-
     template <typename CompType>
     EntityController EntityController::addEmptyComponent()
     {
@@ -34,8 +18,8 @@ namespace paecs
         ComponentMaskFuncs::getComponentMaskOfComps<CompType>(cm);
 
         //2.如果entity之前有插件
-        auto &chunkPtr = this->entityDataPos.chunkPtr;
-        if (chunkPtr != nullptr)
+        // auto &chunkPtr = this->entityDataPos.chunkPtr;
+        if (this->entityDataPos.chunkPtr != nullptr)
         {
             //   2.1.将之前的mask和cm合并
             //      之前的mask存在archtype中，
@@ -51,61 +35,39 @@ namespace paecs
 
         //4，调用registMemForAnEntity
         //   获取新的entity指向的entityDataPos
+        //   此时修改了原来的entityDataPos
+        auto oldEntityDataPos = this->entityDataPos; //在覆盖前拷贝
         targetArchtype.allocateMemForAnEntity(this->entityDataPos);
 
         //5，将map中指向的entityDataPos修改掉
         //    这个不用做了。因为当前EntityController里存的就是map里内容的引用
 
-        //[暂时作废]6，如果有拷贝出的数据，通过entityDataPos访问到archtype具体数据位置，将拷贝出的数据放入archtype
-        //6，如果entity之前有插件
-        //  6.1遍历 componentsIds1，同时通过下标读取offsets 同时
-        if (chunkPtr != nullptr)
+        //6.如果之前有数据，遍历之前的插件数据拷贝到现在的chunk中
+        if (oldEntityDataPos.chunkPtr != nullptr)
         {
-            auto oldArchtype = chunkPtr->archtypePtr;
-            for (int i = 0; i < oldArchtype->componentsIds.size(); i++)
+            auto oldArchtype = oldEntityDataPos.chunkPtr->archtypePtr;
+            for (const auto &oldComp : oldArchtype->compIds2InfoMap)
             {
-                auto componentId = oldArchtype->componentsIds[i];
-                auto componentOffset = oldArchtype->componentsOffsets[i];
-                //还需要一个index
-                //this->entityDataPos.index;
-                //通过chunk[offset+size*index]就能访问到数据了。
-                //然后要将数据对应的加入到新的archtype中
+                //从旧的chunk中读出
+                this->entityDataPos.chunkPtr
+                    ->cpyComponentDataFromOldDatapos2ChunkIndex(
+                        &oldEntityDataPos.getCompDataHeadPtr(
+                            oldComp.second.compOffsetInOneChunk,           //之前的offset
+                            oldComp.second.compDiscription.componentSize), //插件的信息引用中包含size
+                        oldComp.first,                                     //插件id
+                        this->entityDataPos.index                          //entity在chunk中的index
+                    );
             }
-            //chunkPtr->readComponentDataById()
+            //6.then  完成之后移除原来的数据
+            oldArchtype->deallocateMemForAnEntity(oldEntityDataPos);
         }
-        //未分析
-        // const Metatype *temporalMetatypeArray[32];
-
-        // const Metatype *type = get_metatype<CompType>();
-
-        // Archetype *oldarch = get_entity_archetype(scene, id);
-        // ChunkComponentList *oldlist = oldarch->componentList;
-        // bool typeFound = false;
-        // int lenght = oldlist->components.size();
-        // for (int i = 0; i < oldlist->components.size(); i++)
-        // {
-        //     temporalMetatypeArray[i] = oldlist->components[i].type;
-
-        //     //the pointers for metatypes are allways fully stable
-        //     if (temporalMetatypeArray[i] == type)
-        //     {
-        //         typeFound = true;
-        //     }
-        // }
-
-        // Archetype *newArch = oldarch;
-        // if (!typeFound)
-        // {
-
-        //     temporalMetatypeArray[lenght] = type;
-        //     sort_metatypes(temporalMetatypeArray, lenght + 1);
-        //     lenght++;
-
-        //     newArch = find_or_create_archetype(scene, temporalMetatypeArray, lenght);
-
-        //     set_entity_archetype(newArch, id);
-        // }
     }
+
+    template <typename CompType>
+    EntityController EntityController::removeComponent()
+    {
+    }
+
 }
 
 // Entity Scene::createEntity()
