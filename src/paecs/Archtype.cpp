@@ -21,81 +21,107 @@ namespace paecs
     // 		}
 
     // template <typename... CompTypes>
-
-    //生成entity时需要做的操作
-    template <typename NewComp>
-    Archtype &ArchtypeManager::findOrCreateArchtype(const ComponentMask &cm)
+    void Archtype::allocateMemForAnEntity(EntityDataPos &entityDataPos)
     {
-        //find 是根据mask来找，但是创建需要更完整的信息
-        int foundIndex = -1;
-        for (int i = 0; i < archtypeComponentMasks.size(); i++)
+        if (chunks.empty() || chunks.back().entityCnt == maxCnt)
         {
-            if (archtypeComponentMasks[i] == cm)
-            {
-                foundIndex = i;
-                return *archtypes[i];
-                // break;
-            }
+            // }else{
+            // }
+            // if (chunks.back().entityCnt == maxCnt)
+            // {
+            chunks.resize(chunks.size() + 1);
         }
-        if (foundIndex == -1)
-        {
-            //没有找到，创建archtype
-            size_t newSize = archtypeComponentMasks.size() + 1;
-            archtypeComponentMasks.resize(newSize);
-            archtypeComponentMasks[newSize - 1] = cm;
-            archtypes.resize(newSize);
-
-            std::vector<BaseComponent::Id> ids; //对应要新加的组件的id们
-            ComponentIdFuncs::getIdsOfComponents<NewComp>(ids);
-            auto componentsCnt = ids.size();
-            std::vector<int> offsets(componentsCnt);
-            int maxCnt=config::ChunkSize/(constexpr (sizeof...(Comps));
-            //第一个offset就是0
-            for (int i = 1; i < componentsCnt; i++)
-            {
-                offsets[i] = (BaseComponent::getDiscriptionOfComponentById(ids[i - 1])
-                                  .componentSize) *
-                             maxCnt;
-            }
-            //添加顺序跟masks的顺序保持一致
-            archtypes[newSize-1] = std::make_shared<Archtype>(cm, ids, offsets,maxCnt); //createArchtypeWithComponentMask(cm);
-            // archtypes[newSize]->maxCnt=config::ChunkSize/(constexpr (sizeof...(Comps));
-            return *archtypes[newSize];
-        }
-        else
-        { //找到了Archtype
-        }
-        // if (archtypeComponentMasks.)
-        // if (archtypes.contains(cm))
+        chunks.back().entityCnt++;
+        entityDataPos.chunkPtr = std::shared_ptr<Chunk>(&chunks.back());
+        entityDataPos.index = chunks.back().entityCnt - 1;
+        // entityDataPos.
+        // return EntityDataPos(chunks.back(), chunks.back().entityCnt - 1);
+        // auto componentCnt = componentsIds.size();
+        // for (int i = 0; i < componentCnt; i++)
         // {
-        //     return *archtypes[cm];
         // }
-        // else
-        // {
-        //     auto newArchtype = std::make_shared<Archtype>(cm);
-        //     archtypes[cm] = (newArchtype);
-        //     return *newArchtype;
-        // }
-        //计算chunk最大容量
-        // auto maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
     }
-
-    //在遍历的时候用
-    std::vector<std::shared_ptr<Archtype>>
-    // std::vector<Archtype>
-    ArchtypeManager::findArchtypeContainingMask(const ComponentMask &cm)
+    void Archtype::deallocateMemForAnEntity(EntityDataPos &entityDataPos)
     {
-        std::vector<std::shared_ptr<Archtype>> foundedList;
-        auto archtypeCnt = archtypeComponentMasks.size();
-        for (int i = 0; i < archtypeCnt; i++)
-        {
-            if (ComponentMaskFuncs::MaskAContainsMaskB(archtypeComponentMasks[i], cm))
-            {
-                foundedList.push_back(archtypes[i]);
-            }
-        }
-        return foundedList;
     }
+    //
+    ////生成entity时需要做的操作
+    //template <typename NewComp>
+    //Archtype &ArchtypeManager::findOrCreateArchtype(const ComponentMask &cm)
+    //{
+    //    //find 是根据mask来找，但是创建需要更完整的信息
+    //    int foundIndex = -1;
+    //    for (int i = 0; i < archtypeComponentMasks.size(); i++)
+    //    {
+    //        if (archtypeComponentMasks[i] == cm)
+    //        {
+    //            foundIndex = i;
+    //            return *archtypes[i];
+    //            // break;
+    //        }
+    //    }
+    //    if (foundIndex == -1)
+    //    {
+    //        //没有找到，创建archtype
+    //        size_t newSize = archtypeComponentMasks.size() + 1;
+    //        archtypeComponentMasks.resize(newSize);
+    //        archtypeComponentMasks[newSize - 1] = cm;
+    //        archtypes.resize(newSize);
+
+    //        std::vector<BaseComponent::Id> ids; //对应要新加的组件的id们
+    //        ComponentIdFuncs::getIdsOfComponents<NewComp>(ids);
+    //        auto componentsCnt = ids.size();
+    //        std::vector<int> offsets(componentsCnt);
+    //        int maxCnt=config::ChunkSize/(constexpr (sizeof...(Comps));
+    //        //第一个offset就是0
+    //        for (int i = 1; i < componentsCnt; i++)
+    //        {
+    //            offsets[i] = (BaseComponent::getDiscriptionOfComponentById(ids[i - 1])
+    //                              .componentSize) *
+    //                         maxCnt;
+    //        }
+    //        //添加顺序跟masks的顺序保持一致
+    //        archtypes[newSize-1] = std::make_shared<Archtype>(cm, ids, offsets,maxCnt); //createArchtypeWithComponentMask(cm);
+    //        // archtypes[newSize-1]->
+    //        // archtypes[newSize]->maxCnt=config::ChunkSize/(constexpr (sizeof...(Comps));
+    //        return *archtypes[newSize];
+    //    }
+    //    // else
+    //    // {
+    //    //     //找到了Archtype
+
+    //    // }
+    //    // if (archtypeComponentMasks.)
+    //    // if (archtypes.contains(cm))
+    //    // {
+    //    //     return *archtypes[cm];
+    //    // }
+    //    // else
+    //    // {
+    //    //     auto newArchtype = std::make_shared<Archtype>(cm);
+    //    //     archtypes[cm] = (newArchtype);
+    //    //     return *newArchtype;
+    //    // }
+    //    //计算chunk最大容量
+    //    // auto maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
+    //}
+
+    ////在遍历的时候用
+    //std::vector<std::shared_ptr<Archtype>>
+    //// std::vector<Archtype>
+    //ArchtypeManager::findArchtypeContainingMask(const ComponentMask &cm)
+    //{
+    //    std::vector<std::shared_ptr<Archtype>> foundedList;
+    //    auto archtypeCnt = archtypeComponentMasks.size();
+    //    for (int i = 0; i < archtypeCnt; i++)
+    //    {
+    //        if (ComponentMaskFuncs::MaskAContainsMaskB(archtypeComponentMasks[i], cm))
+    //        {
+    //            foundedList.push_back(archtypes[i]);
+    //        }
+    //    }
+    //    return foundedList;
+    //}
     /**
     * 在decs中
     * 通过vector来存储archtype的标识（用于查找匹配
@@ -167,5 +193,4 @@ namespace paecs
     // 		create_chunk_for_archetype(newArch);
     // 		return newArch;
     // 	}
-
 }

@@ -4,6 +4,8 @@
 // #include "Component.h"
 // #include "ComponentPool.h"
 #include "memory"
+#include "Archtype.h"
+#include "ArchtypeManager.h"
 
 namespace paecs
 {
@@ -27,31 +29,50 @@ namespace paecs
     EntityController EntityController::addEmptyComponent()
     {
         auto id = this->entityId;
-        /**
-         * 这里开始就是具体的archrtype查找或创建了，因为会添加插件
-         * 一开始entity指向的chunk是空的，因为还没有插件，所以没有archtype信息
-         * 如果有，就能获取到ComponentMask，然后再跟新加的Component对应的Component合并，
-         * 如果没有就直接获取新新加的componentMask
-         * 通过合并后的ComponentMask去查找或创建对应的Archtype
-         * 查找到archtype后要做的是获取一个chunk并且标记新的位置用于存这个entity的数据，
-        **/
         ComponentMask cm; //存储最终合并的componentMask
+        //1，获取插件对应的mask    cm
         ComponentMaskFuncs::getComponentMaskOfComps<CompType>(cm);
+
+        //2.如果entity之前有插件
+        auto &chunkPtr = this->entityDataPos.chunkPtr;
+        if (chunkPtr != nullptr)
+        {
+            //   2.1.将之前的mask和cm合并
+            //      之前的mask存在archtype中，
+            ComponentMaskFuncs::combineMaskB2A(cm, chunkPtr->archtypePtr->componentMask);
+
+            //   2.2.将之前的数据内容从archtype的chunk中拷贝出来，
+            //       并在之前的archtype中删除
+        }
+
+        //3，通过cm调用findOrCreateArchtype
         auto &am = this->entityManager.scene.archtypeManager;
+        Archtype &targetArchtype = am.findOrCreateArchtype<CompType>(cm); //am.createArchtypeWithComponentMask(cm);
 
-        if (this->entityDataPos->chunkPtr == nullptr)
+        //4，调用registMemForAnEntity
+        //   获取新的entity指向的entityDataPos
+        targetArchtype.allocateMemForAnEntity(this->entityDataPos);
+
+        //5，将map中指向的entityDataPos修改掉
+        //    这个不用做了。因为当前EntityController里存的就是map里内容的引用
+
+        //[暂时作废]6，如果有拷贝出的数据，通过entityDataPos访问到archtype具体数据位置，将拷贝出的数据放入archtype
+        //6，如果entity之前有插件
+        //  6.1遍历 componentsIds1，同时通过下标读取offsets 同时
+        if (chunkPtr != nullptr)
         {
-            goto _newArchtypeOperation;
+            auto oldArchtype = chunkPtr->archtypePtr;
+            for (int i = 0; i < oldArchtype->componentsIds.size(); i++)
+            {
+                auto componentId = oldArchtype->componentsIds[i];
+                auto componentOffset = oldArchtype->componentsOffsets[i];
+                //还需要一个index
+                //this->entityDataPos.index;
+                //通过chunk[offset+size*index]就能访问到数据了。
+                //然后要将数据对应的加入到新的archtype中
+            }
+            //chunkPtr->readComponentDataById()
         }
-        else
-        {
-            //cm跟原本的mask还要做合并
-        }
-
-    _newArchtypeOperation:
-
-        auto &targetArchtype = am.findOrCreateArchtype(cm); //am.createArchtypeWithComponentMask(cm);
-
         //未分析
         // const Metatype *temporalMetatypeArray[32];
 

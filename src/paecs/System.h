@@ -7,7 +7,7 @@
 #include <typeindex>
 #include <memory>
 // #include "Component.h"
-#include "ComponentIdCounter.h"
+#include "Component.h"
 
 namespace paecs
 {

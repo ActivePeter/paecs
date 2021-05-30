@@ -21,6 +21,8 @@ namespace paecs
          * chunk指针，在chunk中的index,
          * 由此可以知道chunk中需要取出一部分信息用于包含archtype的指针，才能保留他的类型信息，
          **/
-        phmap::flat_hash_map<EntityID, std::shared_ptr<EntityDataPos>> entityId2Data_Map;
+        //    当这句话放屁                                 使用指针的原因：entity为空插件时不指向任何的chunk，此时为空指针
+        // phmap::flat_hash_map<EntityID, std::shared_ptr<EntityDataPos>> entityId2DataPos_Map;
+        phmap::flat_hash_map<EntityID, EntityDataPos> entityId2DataPos_Map;
     };
 }

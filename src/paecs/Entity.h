@@ -2,6 +2,7 @@
 
 #include "Core.h"
 #include "Scene.h"
+#include "EntityManager.h"
 // #include "ECManager.h"
 
 namespace paecs
@@ -13,28 +14,37 @@ namespace paecs
     };
     struct EntityDataPos
     {
+        // public:
+        // Chunk &chunkRef;
+        //使用指针的原因   entity为空插件时不指向任何的chunk
         std::shared_ptr<Chunk> chunkPtr;
         uint32_t index;
         EntityDataPos(
             std::shared_ptr<Chunk> chunkPtr1,
+            // Chunk &chunkRef1,
             uint32_t index1)
             : chunkPtr(chunkPtr1),
-              index(index1){};
+              //   chunkRef(chunkRef1),
+              index(index1){
+                  // chunkPtr = std::shared_ptr<Chunk>(&chunkRef1);
+              };
     };
     class EntityController
     {
     private:
         EntityManager &entityManager;
         EntityID entityId;
-        std::shared_ptr<EntityDataPos> entityDataPos;
+        // std::shared_ptr<EntityDataPos> entityDataPos;
+        EntityDataPos &entityDataPos;
         /* data */
     public:
         EntityController(
             EntityManager &entityManager1,
             EntityID entityId1,
-            const std::shared_ptr<EntityDataPos> &entityDataPos1) : entityManager(entityManager1),
-                                                                    entityId(entityId1),
-                                                                    entityDataPos(entityDataPos1)
+            // const std::shared_ptr<EntityDataPos> &entityDataPos1
+            EntityDataPos &entityDataPos1) : entityManager(entityManager1),
+                                             entityId(entityId1),
+                                             entityDataPos(entityDataPos1)
         {
         }
         // template <typename CompType>
