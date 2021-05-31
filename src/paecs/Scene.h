@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 // #include "ECManager.h"
 // #include "SManager.h"
 #include <memory>
@@ -11,45 +11,50 @@
 #include "Entity.h"
 #include "Archtype.h"
 #include "EntityManager.h"
+#include "ArchtypeManager.h"
 
 namespace paecs
 {
-    // class ECManager;
-    class Scene
-    {
-    private:
-        phmap::flat_hash_map<std::type_index, std::shared_ptr<System>> systems;
+	// class ECManager;
+	class Scene
+	{
+	private:
+		phmap::flat_hash_map<std::type_index, std::shared_ptr<System>> systems;
 
-        // std::unique_ptr<Entity> = nullptr;
-        // std::unique_ptr<SManager> sManager = nullptr;
-        /* data */
+		// std::unique_ptr<Entity> = nullptr;
+		// std::unique_ptr<SManager> sManager = nullptr;
+		/* data */
 
-        ArchtypeManager archtypeManager = ArchtypeManager(*this);
-        EntityManager entityManager = EntityManager(*this);
+		ArchtypeManager archtypeManager = ArchtypeManager(*this);
+		EntityManager entityManager = EntityManager(*this);
 
-    public:
-        Scene(/* args */);
-        // ECManager &getEntityManager() const;
-        // SManager &getSystemManager() const;
+	public:
+		Scene(/* args */);
+		// ECManager &getEntityManager() const;
+		// SManager &getSystemManager() const;
 
-        template <typename SysClass>
-        Scene &addSys();
+		template <typename SysClass>
+		Scene &addSys();
 
-        template <typename SysClass>
-        bool hasSys();
-        // EventManager &getEventManager() const;
+		template <typename SysClass>
+		bool hasSys();
+		// EventManager &getEventManager() const;
 
-        template <typename Func>
-        void foreachComps(Func &&func);
+		template <typename Func>
+		void foreachComps(Func &&func);
 
-        template <typename... Comps>
-        inline EntityController createEntity();
+		//创建entity
+		template <typename... Comps>
+		inline EntityController createEntity();
 
-        // std::unique_ptr<EventManager> eventManager = nullptr;
-        // ~Scene();
-        void loop();
-    };
+		//删除entity
+		inline bool deleteEntity(EntityID id);
 
-    std::unique_ptr<Scene> createScene();
+		// std::unique_ptr<EventManager> eventManager = nullptr;
+		// ~Scene();
+		void loop();
+	};
+
+	std::unique_ptr<Scene> createScene();
 
 }

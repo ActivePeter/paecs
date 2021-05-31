@@ -12,6 +12,9 @@ namespace paecs
         // eventManager = std::make_unique<EventManager>(*this);
     }
 
+    /////////////////////////////////////////////////////
+    // system
+    /////////////////////////////////////////////////////
     template <typename SysClass>
     Scene &Scene::addSys()
     {
@@ -31,7 +34,13 @@ namespace paecs
     bool Scene::hasSys()
     {
     }
+    void Scene::loop()
+    { //遍历所有system
+    }
 
+    /////////////////////////////////////////////////////
+    // comp
+    /////////////////////////////////////////////////////
     template <typename Func>
     void Scene::foreachComps(Func &&func)
     {
@@ -43,18 +52,22 @@ namespace paecs
         // for_each<Func>(query, std::move(function));
     }
 
-    void Scene::loop()
-    { //遍历所有system
-    }
-
     std::unique_ptr<Scene> createScene()
     {
         return std::make_unique<Scene>();
     }
 
+    /////////////////////////////////////////////////////
+    // entity
+    /////////////////////////////////////////////////////
     template <typename... Comps>
     inline EntityController Scene::createEntity()
     {
         return entityManager.createEntity();
+    }
+
+    inline bool Scene::deleteEntity(EntityID id)
+    {
+        return this->entityManager.deleteEntity(id);
     }
 }

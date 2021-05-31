@@ -18,8 +18,7 @@ namespace paecs
 		//archtype中某个插件的描述信息引用
 		ComponentDiscription& compDiscription;
 		// size_t compSize;
-		CompInfoInArchtype(int offset, ComponentDiscription& disc) :
-			compOffsetInOneChunk(offset),
+		CompInfoInArchtype(int offset, ComponentDiscription& disc) : compOffsetInOneChunk(offset),
 			compDiscription(disc) {}
 	};
 	class ArchtypeManager;
@@ -48,7 +47,8 @@ namespace paecs
 			// componentsOffsets = componentsOffsets1;
 			for (int i = 0; i < componentsIds1.size(); i++)
 			{
-				compIds2InfoMap[componentsIds1[i]] = CompInfoInArchtype(componentsOffsets1[i], BaseComponent::getDiscriptionOfComponentById(componentsIds1[i]));
+				auto compInfo = CompInfoInArchtype(componentsOffsets1[i], BaseComponent::getDiscriptionOfComponentById(componentsIds1[i]));
+				compIds2InfoMap[componentsIds1[i]] = compInfo;
 				// compIds2offsetsMap[componentsIds1[i]] = componentsOffsets1[i];
 			}
 			maxCnt = maxCnt1;
@@ -58,7 +58,7 @@ namespace paecs
 
 		//用于通过插件id直接查找插件信息，也可用于遍历插件信息
 		phmap::flat_hash_map<BaseComponent::Id, CompInfoInArchtype> compIds2InfoMap;
-		
+
 		// std::vector<BaseComponent::Id> componentsIds;
 		//每个Components对应的Offset;
 		//每个archtype中component内容都不一样所以offset是不一样的
@@ -68,7 +68,7 @@ namespace paecs
 
 		//chunks要用智能指针，因为在别处使用时，需要拿chunks的智能指针
 		//存储所有有数据的chunks，以备遍历 (空list
-		std::list<std::shared_ptr<Chunk>> chunks; 
+		std::list<std::shared_ptr<Chunk>> chunks;
 
 		//存储删除entity数据后，又没满了的chunk，以备后续再次利用
 		std::list<std::shared_ptr<Chunk>> back2NotFullChunks;
@@ -105,7 +105,7 @@ namespace paecs
 		 * @param id       插件id，需要这个id来获取在当前chunk中应该用的size和offset
 		 * @param index    entity在chunk中的位置
 		 */
-		void cpyComponentDataFromOldDatapos2ChunkIndex(uint8_t* oldDataPos, BaseComponent::Id id, uint32_t index)
+		void cpyComponentDataFromOldDatapos2ChunkIndex_ifContainId(uint8_t* oldDataPos, BaseComponent::Id id, uint32_t index)
 		{
 			if (archtypePtr->compIds2InfoMap.contains(id))
 			{
