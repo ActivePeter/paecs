@@ -33,15 +33,29 @@ namespace paecs
 		// ECManager &getEntityManager() const;
 		// SManager &getSystemManager() const;
 
+		/////////////////////////////////////////////////////
+		// sys
+		/////////////////////////////////////////////////////
 		template <typename SysClass>
 		Scene &addSys();
 
 		template <typename SysClass>
 		bool hasSys();
+
+		template <typename FuncType>
+		Scene &addSysByFunc(FuncType func);
 		// EventManager &getEventManager() const;
+
+		/////////////////////////////////////////////////////
+		// comp
+		/////////////////////////////////////////////////////
 
 		template <typename Func>
 		void foreachComps(Func &&func);
+
+		/////////////////////////////////////////////////////
+		// entity
+		/////////////////////////////////////////////////////
 
 		//创建entity
 		template <typename... Comps>
