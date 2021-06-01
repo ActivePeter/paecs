@@ -18,24 +18,26 @@ namespace paecs_example
         int dx, dy;
     };
 
-    class HelloworldSystem : public paecs::System
+    // class HelloworldSystem : public paecs::System
+    // {
+    // public:
+    //     // HelloworldSystem(paecs::Scene scene)
+    //     void init() override
+    //     {
+    //         requireComponent<A, B, C>();
+    //     }
+
+    //     void update(paecs::Scene &scene)
+    //     {
+    //         scene.foreachComps(
+    //             [&](paecs::EntityID id, A &a, B &b) {
+    //                 // count++;
+    //             });
+    //     }
+    // };
+    void helloworld1(A &a)
     {
-    public:
-        // HelloworldSystem(paecs::Scene scene)
-        void init() override
-        {
-            requireComponent<A, B, C>();
-        }
-
-        void update(paecs::Scene &scene)
-        {
-            scene.foreachComps(
-                [&](paecs::EntityID id, A &a, B &b) {
-                    // count++;
-                });
-        }
-    };
-
+    }
     void main()
     {
         auto &ecsScene = *(paecs::createScene());
@@ -45,11 +47,12 @@ namespace paecs_example
             .addEmptyComponent<A>()
             .addEmptyComponent<B>();
         ecsScene
-            .addSys<HelloworldSystem>();
+            .addSysByFunc(helloworld1);
+        // .addSys<HelloworldSystem>();
 
         while (1)
         {
-            ecsScene.loop();
+            // ecsScene.loop();
             /* code */
         }
 

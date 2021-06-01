@@ -8,98 +8,135 @@
 #include <memory>
 // #include "Component.h"
 #include "Component.h"
+#include "Scene.h"
 
 namespace paecs
 {
 
-    class World;
+	class World;
 
-    // template <typename... Comps>
-    // class UpdateSystem : public System;
-    namespace SystemAbout
-    {
-        template <class FuncType>
-        struct Specializer
-        {
-        };
-        template <class RetType, class... ArgsType>
-        struct Specializer<RetType(ArgsType...)>
-        {
-            using SpecializedUpdateSystemType = UpdateSystem<ArgsType...>;
-        };
-    }
-    // The system processes entities that it's interested in each frame. Derive from this one!
-    class System
-    {
-    public:
-        System(Scene &scene1) : scene(scene1) {}
-        virtual ~System() {}
-        virtual void init();
-        virtual void update();
-        // what component types the system requires of entities (we can use this method in the constructor for example)
-        template <typename FirsrCompType, typename... RestCompTypes>
-        void requireComponent();
+	// template <typename... Comps>
+	// class UpdateSystem : public System;
+	template <typename... Comps>
+	class UpdateSystem;
 
-        // returns a list of entities that the system should process each frame
-        // std::vector<Entity> getEntities() { return entities; }
+	namespace SystemAbout
+	{
+		template <class FuncType>
+		struct Specializer
+		{
+		};
+		template <class RetType, class... ArgsType>
+		struct Specializer<RetType(ArgsType...)>
+		{
+			using SpecializedUpdateSystemType = UpdateSystem<ArgsType...>;
+		};
+	}
+	// The system processes entities that it's interested in each frame. Derive from this one!
 
-        // // adds an entity of interest
-        // void addEntity(Entity e);
+	class BaseSystem
+	{
+		virtual void update();
+	};
 
-        // // if the entity is not alive anymore (during processing), the entity should be removed
-        // void removeEntity(Entity e);
+	template <typename... Comps>
+	class System : public BaseSystem
+	{
+	public:
+		System(Scene &scene1, void (*sysFunc1)(...)) : scene(scene1)
+		{
+			//在这里根据Comps生成componentMask
+			this->componentMask = ComponentMaskFuncs::getComponentMaskOfComps<Comps...>();
+			//传入需要回调的函数
+			sysFunc = sysFunc1;
+		}
+		virtual ~System() {}
+		// virtual void init();
+		virtual void update();
+		// what component types the system requires of entities (we can use this method in the constructor for example)
+		template <typename FirsrCompType, typename... RestCompTypes>
+		//void requireComponent();
 
-        const ComponentMask &getComponentMask() const { return componentMask; }
+		// returns a list of entities that the system should process each frame
+		// std::vector<Entity> getEntities() { return entities; }
 
-    protected:
-        Scene &getScene() const;
+		// // adds an entity of interest
+		// void addEntity(Entity e);
 
-    private:
-        template <typename CompType>
-        void requireComponent();
-        // which components an entity must have in order for the system to process the entity
-        ComponentMask componentMask;
+		// // if the entity is not alive anymore (during processing), the entity should be removed
+		// void removeEntity(Entity e);
 
-        //存储需要执行的函数指针
-        void (*sysFunc)(...);
-        // vector of all entities that the system is interested in
-        // std::vector<Entity> entities;
+		//const ComponentMask& getComponentMask() const { return componentMask; }
 
-        Scene &scene;
-    };
+		protected :
+			// Scene &getScene() const;
+			ComponentMask componentMask;
+		Scene &scene;
 
-    /**
-     * 
-     * 参考一下decs
-     * 
-     * **/
-    // 		template<typename... Args, typename Func>
-    // 		void entity_chunk_iterate(DataChunk* chnk, Func&& function) {
-    // 			auto tup = std::make_tuple(get_chunk_array<Args>(chnk)...);
-    // #ifndef NDEBUG
-    // 			(assert(std::get<decltype(get_chunk_array<Args>(chnk))>(tup).chunkOwner == chnk), ...);
-    // #endif
+	private:
+		// template <typename CompType>
+		// void requireComponent();
+		// which components an entity must have in order for the system to process the entity
 
-    // 			for (int i = chnk->header.last - 1; i >= 0; i--) {
-    // 				function(std::get<decltype(get_chunk_array<Args>(chnk))>(tup)[i]...);
-    // 			}
-    // 		}
+		//存储需要执行的函数指针
+		void (*sysFunc)(...);
+		// vector of all entities that the system is interested in
+		// std::vector<Entity> entities;
+	};
 
-    //在addsystem的时候创建这样的实例
-    template <typename... Comps>
-    class UpdateSystem : public System
-    {
-    public:
-        void update()
-        {
-            sysFunc(entityId, getCompData<Comps>()...);
-        }
-    };
-    // template <typename T>
-    // void System::requireComponent()
-    // {
-    //     const auto componentId = Component<T>::getId();
-    //     componentMask.set(componentId);
-    // }
+	// template <typename... Comps>
+	// class SystemHasComp:System{
+
+	// }
+	/**
+	 *
+	 * 参考一下decs
+	 *
+	 * **/
+	// 		template<typename... Args, typename Func>
+	// 		void entity_chunk_iterate(DataChunk* chnk, Func&& function) {
+	// 			auto tup = std::make_tuple(get_chunk_array<Args>(chnk)...);
+	// #ifndef NDEBUG
+	// 			(assert(std::get<decltype(get_chunk_array<Args>(chnk))>(tup).chunkOwner == chnk), ...);
+	// #endif
+
+	// 			for (int i = chnk->header.last - 1; i >= 0; i--) {
+	// 				function(std::get<decltype(get_chunk_array<Args>(chnk))>(tup)[i]...);
+	// 			}
+	// 		}
+
+	//在addsystem的时候创建这样的实例
+	template <typename... Comps>
+	class UpdateSystem : public System<Comps...>
+	{
+	public:
+		void update()
+		{
+			//1.根据componentMask获取要遍历的archtype组
+			// System<Comps...>::sc
+			Scene &scene = this->scene;
+			auto archtypes = scene.archtypeManager.findArchtypeContainingMask(this->componentMask);
+			for (int i = 0; i < archtypes.size(); i++)
+			{
+				auto &chunks = archtypes[i]->chunks;
+				auto pos = chunks.cbegin();
+				for (; pos != chunks.cend(); ++pos)
+				{
+					for (int j = 0; j < (*pos)->entityCnt; j++)
+					{
+						sysFunc(entityId, (*pos)->getCompDataOfIndex<Comps>(j)...);
+					}
+					//  useData(*pos);
+				}
+			}
+			//2.遍历archtype中的数据。并且
+		}
+	};
+	// template <typename T>
+	// void System::requireComponent()
+	// {
+	//     const auto componentId = Component<T>::getId();
+	//     componentMask.set(componentId);
+	// }
 
 }

@@ -12,14 +12,17 @@
 #include "Archtype.h"
 #include "EntityManager.h"
 #include "ArchtypeManager.h"
+#include "Entity.h"
 
 namespace paecs
 {
 	// class ECManager;
+	class EntityManager;
+	class ArchtypeManager;
 	class Scene
 	{
 	private:
-		phmap::flat_hash_map<std::type_index, std::shared_ptr<System>> systems;
+		phmap::flat_hash_map<std::type_index, std::shared_ptr<BaseSystem>> systems;
 
 		// std::unique_ptr<Entity> = nullptr;
 		// std::unique_ptr<SManager> sManager = nullptr;
@@ -29,7 +32,7 @@ namespace paecs
 		EntityManager entityManager = EntityManager(*this);
 
 	public:
-		Scene(/* args */);
+		Scene(/* args */) {}
 		// ECManager &getEntityManager() const;
 		// SManager &getSystemManager() const;
 

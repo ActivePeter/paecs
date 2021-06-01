@@ -6,11 +6,12 @@
 #include "memory"
 #include "Archtype.h"
 #include "ArchtypeManager.h"
+#include "ComponentMask.h"
 
 namespace paecs
 {
 	template <typename CompType>
-	EntityController& EntityController::addEmptyComponent()
+	EntityController &EntityController::addEmptyComponent()
 	{
 		auto id = this->entityId;
 		ComponentMask cm; //存储最终合并的componentMask
@@ -30,8 +31,8 @@ namespace paecs
 		}
 
 		//3，通过cm调用findOrCreateArchtype
-		auto& am = this->entityManager.scene.archtypeManager;
-		Archtype& targetArchtype = am.findOrCreateArchtype<CompType>(cm); //am.createArchtypeWithComponentMask(cm);
+		auto &am = this->entityManager.scene.archtypeManager;
+		Archtype &targetArchtype = am.findOrCreateArchtype<CompType>(cm); //am.createArchtypeWithComponentMask(cm);
 
 		//4，调用registMemForAnEntity
 		//   获取新的entity指向的entityDataPos
@@ -46,16 +47,16 @@ namespace paecs
 		if (oldEntityDataPos.chunkPtr != nullptr)
 		{
 			auto oldArchtype = oldEntityDataPos.chunkPtr->archtypePtr;
-			for (const auto& oldComp : oldArchtype->compIds2InfoMap)
+			for (const auto &oldComp : oldArchtype->compIds2InfoMap)
 			{
 				//从旧的chunk中读出
 				this->entityDataPos.chunkPtr
 					->cpyComponentDataFromOldDatapos2ChunkIndex(
 						&oldEntityDataPos.getCompDataHeadPtr(
-							oldComp.second.compOffsetInOneChunk,           //之前的offset
+							oldComp.second.compOffsetInOneChunk,		   //之前的offset
 							oldComp.second.compDiscription.componentSize), //插件的信息引用中包含size
-						oldComp.first,                                     //插件id
-						this->entityDataPos.index                          //entity在chunk中的index
+						oldComp.first,									   //插件id
+						this->entityDataPos.index						   //entity在chunk中的index
 					);
 			}
 			//6.then  完成之后移除原来的数据
@@ -65,11 +66,11 @@ namespace paecs
 	}
 
 	template <typename CompType>
-	EntityController& EntityController::removeComponent()
+	EntityController &EntityController::removeComponent()
 	{
 		/// <summary>
 		/// 主要逻辑和addComponent是差不多的
-		/// 
+		///
 		/// </summary>
 		/// <typeparam name="CompType"></typeparam>
 		/// <returns></returns>
@@ -85,16 +86,16 @@ namespace paecs
 			bool subSucc = ComponentMaskFuncs::subtractMaskBFromAAndReturnInC(
 				this->entityDataPos.chunkPtr->archtypePtr->componentMask,
 				cm,
-				cm
-			);
-			if (!subSucc) {
+				cm);
+			if (!subSucc)
+			{
 				goto end;
 			}
 		}
 
 		//3，通过cm调用findOrCreateArchtype
-		auto& am = this->entityManager.scene.archtypeManager;
-		Archtype& targetArchtype = am.findOrCreateArchtype<CompType>(cm); //am.createArchtypeWithComponentMask(cm);
+		auto &am = this->entityManager.scene.archtypeManager;
+		Archtype &targetArchtype = am.findOrCreateArchtype<CompType>(cm); //am.createArchtypeWithComponentMask(cm);
 
 		//4，调用registMemForAnEntity
 		//   获取新的entity指向的entityDataPos
@@ -111,16 +112,16 @@ namespace paecs
 		if (oldEntityDataPos.chunkPtr != nullptr)
 		{
 			auto oldArchtype = oldEntityDataPos.chunkPtr->archtypePtr;
-			for (const auto& oldComp : oldArchtype->compIds2InfoMap)
+			for (const auto &oldComp : oldArchtype->compIds2InfoMap)
 			{
 				//从旧的chunk中读出
 				this->entityDataPos.chunkPtr
 					->cpyComponentDataFromOldDatapos2ChunkIndex_ifContainId(
 						&oldEntityDataPos.getCompDataHeadPtr(
-							oldComp.second.compOffsetInOneChunk,           //之前的offset
+							oldComp.second.compOffsetInOneChunk,		   //之前的offset
 							oldComp.second.compDiscription.componentSize), //插件的信息引用中包含size
-						oldComp.first,                                     //插件id
-						this->entityDataPos.index                          //entity在chunk中的index
+						oldComp.first,									   //插件id
+						this->entityDataPos.index						   //entity在chunk中的index
 					);
 			}
 			//6.then  完成之后移除原来的数据

@@ -1,9 +1,13 @@
 #pragma once
 
 #include "Archtype.h"
+#include "Scene.h"
+#include "ArchtypeManager.h"
+
 namespace paecs
 {
     class Archtype;
+    class Scene;
     class ArchtypeManager
     {
     public:

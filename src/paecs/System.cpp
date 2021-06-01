@@ -5,19 +5,19 @@
 
 namespace paecs
 {
-    template <typename FirsrCompType, typename... RestCompTypes>
-    void System::requireComponent()
-    {
-        requireComponent<FirsrCompType>();
-        requireComponent<RestCompTypes...>();
-    }
+    // template <typename FirsrCompType, typename... RestCompTypes>
+    // void System::requireComponent()
+    // {
+    //     requireComponent<FirsrCompType>();
+    //     requireComponent<RestCompTypes...>();
+    // }
 
-    template <typename CompType>
-    void System::requireComponent()
-    {
-        const auto componentId = ComponentIdCounter<CompType>::getId();
-        componentMask.set(componentId);
-    }
+    // template <typename CompType>
+    // void System::requireComponent()
+    // {
+    //     const auto componentId = ComponentIdCounter<CompType>::getId();
+    //     componentMask.set(componentId);
+    // }
 
     // void System::addEntity(Entity e)
     // {

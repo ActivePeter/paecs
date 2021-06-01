@@ -8,6 +8,7 @@
 #include "Entity.h"
 #include "ArchtypeManager.h"
 #include "parallel_hashmap/phmap.h"
+#include "Archtype.h"
 
 namespace paecs
 {
@@ -16,10 +17,10 @@ namespace paecs
 		//archtype中某个插件在chunk中的offset
 		int compOffsetInOneChunk;
 		//archtype中某个插件的描述信息引用
-		ComponentDiscription& compDiscription;
+		ComponentDiscription &compDiscription;
 		// size_t compSize;
-		CompInfoInArchtype(int offset, ComponentDiscription& disc) : compOffsetInOneChunk(offset),
-			compDiscription(disc) {}
+		CompInfoInArchtype(int offset, ComponentDiscription &disc) : compOffsetInOneChunk(offset),
+																	 compDiscription(disc) {}
 	};
 	class ArchtypeManager;
 	struct Chunk;
@@ -30,16 +31,16 @@ namespace paecs
 	private:
 		// static std::shared_ptr<Archtype<CompTypes>> singleCase;
 		ComponentMask componentMask;
-		ArchtypeManager& archtypeManager;
+		ArchtypeManager &archtypeManager;
 		// vector Component/
 		int index;
 
 	public:
-		Archtype(ArchtypeManager& archtypeManager1, int index1,
-			const ComponentMask& componentMask1,
-			std::vector<BaseComponent::Id> componentsIds1,
-			std::vector<int> componentsOffsets1,
-			int maxCnt1)
+		Archtype(ArchtypeManager &archtypeManager1, int index1,
+				 const ComponentMask &componentMask1,
+				 std::vector<BaseComponent::Id> componentsIds1,
+				 std::vector<int> componentsOffsets1,
+				 int maxCnt1)
 			: archtypeManager(archtypeManager1)
 		{
 			componentMask = componentMask1;
@@ -59,6 +60,11 @@ namespace paecs
 		//用于通过插件id直接查找插件信息，也可用于遍历插件信息
 		phmap::flat_hash_map<BaseComponent::Id, CompInfoInArchtype> compIds2InfoMap;
 
+		template <typename Comp>
+		CompInfoInArchtype &getCompInfo()
+		{
+			return compIds2InfoMap[Component<Comp>().getId];
+		}
 		// std::vector<BaseComponent::Id> componentsIds;
 		//每个Components对应的Offset;
 		//每个archtype中component内容都不一样所以offset是不一样的
@@ -76,8 +82,8 @@ namespace paecs
 		// std::list<Chunk> chunks;
 		//在创建entity时调用
 		// void registMemForAnEntity(EntityDataPos &entityDataPos);
-		void allocateMemForAnEntity(EntityDataPos& entityDataPos);
-		void deallocateMemForAnEntity(EntityDataPos& entityDataPos);
+		void allocateMemForAnEntity(EntityDataPos &entityDataPos);
+		void deallocateMemForAnEntity(EntityDataPos &entityDataPos);
 	};
 
 	// Archtype a;
@@ -105,19 +111,26 @@ namespace paecs
 		 * @param id       插件id，需要这个id来获取在当前chunk中应该用的size和offset
 		 * @param index    entity在chunk中的位置
 		 */
-		void cpyComponentDataFromOldDatapos2ChunkIndex_ifContainId(uint8_t* oldDataPos, BaseComponent::Id id, uint32_t index)
+		void cpyComponentDataFromOldDatapos2ChunkIndex_ifContainId(uint8_t *oldDataPos, BaseComponent::Id id, uint32_t index)
 		{
 			if (archtypePtr->compIds2InfoMap.contains(id))
 			{
 				// auto size = BaseComponent::getDiscriptionOfComponentById(id).componentSize;
-				auto& compInfo = archtypePtr->compIds2InfoMap[id];
-				auto& size = compInfo.compDiscription.componentSize;
-				auto& offset = compInfo.compOffsetInOneChunk;
+				auto &compInfo = archtypePtr->compIds2InfoMap[id];
+				auto &size = compInfo.compDiscription.componentSize;
+				auto &offset = compInfo.compOffsetInOneChunk;
 				// auto offset = .compOffsetInOneChunk;
 				// auto size=
 				memcpy(&storage[offset + index * size], oldDataPos, size);
 				// storage[offset+]
 			}
+		}
+		template <typename Comp>
+		Comp &getCompDataOfIndex(int index)
+		{
+			CompInfoInArchtype &info = this->archtypePtr->getCompInfo<Comp>();
+
+			return (Comp &)*(&(storage[info.compOffsetInOneChunk + info.compDiscription.componentSize * index]));
 		}
 	};
 
