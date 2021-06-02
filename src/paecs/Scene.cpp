@@ -3,24 +3,26 @@
 #include "Scene.h"
 #include "memory"
 #include "System.h"
+#include "EntityManager.h"
 
 namespace paecs
 {
-
+	class EntityManager;
 	/////////////////////////////////////////////////////
 	// system
 	/////////////////////////////////////////////////////
 	template <typename SysClass>
 	Scene &Scene::addSys()
 	{
-		if (hasSys<SysClass>())
-		{
-			goto end;
-		}
+		// if (hasSys<SysClass>())
+		// {
+		// 	goto end;
+		// }
 
-		std::shared_ptr<SysClass> system(new SysClass(*this));
-		system->init();
-		systems.insert(std::make_pair(std::type_index(typeid(SysClass)), system));
+		// std::shared_ptr<SysClass> system(new SysClass(*this));
+		// system->init();
+
+		// systems.insert(std::make_pair(std::type_index(typeid(SysClass)), system));
 	end:
 		return *this;
 	}
@@ -43,7 +45,9 @@ namespace paecs
 		//2.获取到含有函数参数类型的sys类型
 		using speSys = SystemAbout::Specializer<funcType>::SpecializedUpdateSystemType;
 
-		systems[std::type_index(typeid(SysClass)] = std::make_shared<speSys>(*this, func);
+		// systems[std::type_index(typeid(funcType)];
+		// systems[std::type_index(typeid(funcType)] =std::dynamic_cast<BaseSystem>(std::make_shared<speSys>(*this, func));
+		// std::make_shared<speSys>(*this, func);
 
 		return *this;
 		//然后根据拿到的types创建system
@@ -84,14 +88,14 @@ namespace paecs
 	/////////////////////////////////////////////////////
 	// entity
 	/////////////////////////////////////////////////////
-	template <typename... Comps>
-	inline EntityController Scene::createEntity()
+	// template <typename... Comps>
+	EntityController Scene::createEntity()
 	{
-		return entityManager.createEntity();
+		return entityManager->createEntity();
 	}
 
-	inline bool Scene::deleteEntity(EntityID id)
+	bool Scene::deleteEntity(EntityID id)
 	{
-		return this->entityManager.deleteEntity(id);
+		return this->entityManager->deleteEntity(id);
 	}
 }

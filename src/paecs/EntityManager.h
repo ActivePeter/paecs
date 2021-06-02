@@ -2,9 +2,16 @@
 #include "Scene.h"
 #include "parallel_hashmap/phmap.h"
 #include "Entity.h"
+#include "list"
+#include "unordered_map"
+
 namespace paecs
 {
 	class Scene;
+	struct EntityID;
+	struct EntityDataPos;
+	class EntityController;
+
 	class EntityManager
 	{
 
@@ -30,6 +37,7 @@ namespace paecs
 		 **/
 		//    当这句话放屁                                 使用指针的原因：entity为空插件时不指向任何的chunk，此时为空指针
 		// phmap::flat_hash_map<EntityID, std::shared_ptr<EntityDataPos>> entityId2DataPos_Map;
+		// std::unordered_map<EntityID, EntityDataPos> entityId2DataPos_Map;
 		phmap::flat_hash_map<EntityID, EntityDataPos> entityId2DataPos_Map;
 	};
 }

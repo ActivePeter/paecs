@@ -4,9 +4,30 @@
 
 namespace paecs
 {
+	Archtype::Archtype(ArchtypeManager &archtypeManager1, int index1,
+					   const ComponentMask &componentMask1,
+					   std::vector<BaseComponent::Id> componentsIds1,
+					   std::vector<int> componentsOffsets1,
+					   int maxCnt1) : archtypeManager(archtypeManager1)
+	{
 
+		componentMask = componentMask1;
+		// componentsIds = componentsIds1;
+		// componentsOffsets = componentsOffsets1;
+		for (int i = 0; i < componentsIds1.size(); i++)
+		{
+			CompInfoInArchtype compInfo(componentsOffsets1[i], BaseComponent::getDiscriptionOfComponentById(componentsIds1[i]));
+			BaseComponent::Id id = componentsIds1[i];
+			// compIds2InfoMap[id] = compInfo;
+			compIds2InfoMap[id] = compInfo;
+			// compIds2offsetsMap[componentsIds1[i]] = componentsOffsets1[i];
+		}
+		maxCnt = maxCnt1;
+		index = index1;
+		// maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
+	}
 	// template <typename... CompTypes>
-	void Archtype::allocateMemForAnEntity(EntityDataPos& entityDataPos)
+	void Archtype::allocateMemForAnEntity(EntityDataPos &entityDataPos)
 	{
 		if (back2NotFullChunks.size() > 0)
 		{
@@ -38,23 +59,23 @@ namespace paecs
 	}
 
 	//在池中取消entity数据的注册
-	void Archtype::deallocateMemForAnEntity(EntityDataPos& entityDataPos)
+	void Archtype::deallocateMemForAnEntity(EntityDataPos &entityDataPos)
 	{
 		std::shared_ptr<Chunk> chunkPtr = entityDataPos.chunkPtr;
 		if (entityDataPos.index < chunkPtr->entityCnt - 1)
 		{
-			for (const auto& comp : this->compIds2InfoMap)
+			for (const auto &comp : this->compIds2InfoMap)
 			{
-				auto& compInfo = comp.second;
-				auto& offset = compInfo.compOffsetInOneChunk;
-				auto& size = compInfo.compDiscription.componentSize;
+				auto &compInfo = comp.second;
+				auto &offset = compInfo.compOffsetInOneChunk;
+				auto &size = compInfo.compDiscription->componentSize;
 
 				//如果数据不是最后一个(即 index小于总数减1)
 				//if (entityDataPos.index < chunkPtr->entityCnt - 1)
-			   // {
-				memcpy(&chunkPtr->storage[offset + size * entityDataPos.index],       //当前数据开头
-					&chunkPtr->storage[offset + size * (entityDataPos.index + 1)], //当前数据下一个数据的开头
-					size * (chunkPtr->entityCnt - entityDataPos.index - 1)         //当前数据后面的所有有效数据大小
+				// {
+				memcpy(&chunkPtr->storage[offset + size * entityDataPos.index],		  //当前数据开头
+					   &chunkPtr->storage[offset + size * (entityDataPos.index + 1)], //当前数据下一个数据的开头
+					   size * (chunkPtr->entityCnt - entityDataPos.index - 1)		  //当前数据后面的所有有效数据大小
 				);
 				// }
 			}

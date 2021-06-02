@@ -18,13 +18,17 @@ namespace paecs
 			//nextEntityId每次使用自增1
 			nextEntityId++;
 		}
-		// auto newEntityDataPtr = std::make_shared<EntityDataPos>(nullptr, 0);
+		// auto newEntityDataPosPtr = std::make_shared<EntityDataPos>(nullptr, 0);
 		entityId2DataPos_Map[entityId] = EntityDataPos(nullptr, 0);
 		return EntityController(*this, entityId, entityId2DataPos_Map[entityId]);
 	}
 
 	bool EntityManager::deleteEntity(EntityID entityId)
 	{
+		if (entityId2DataPos_Map.contains(entityId))
+		{
+			return false;
+		}
 		//1.加入已经删除的entity中
 		this->destroyedEntities.push_back(entityId);
 		//2.将指向的数据内容deallocate
@@ -33,6 +37,7 @@ namespace paecs
 			entityDataPos);
 		//3.从map中移除
 		entityId2DataPos_Map.erase(entityId);
+		return true;
 	}
 
 }

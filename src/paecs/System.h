@@ -14,6 +14,7 @@ namespace paecs
 {
 
 	class World;
+	class Scene;
 
 	// template <typename... Comps>
 	// class UpdateSystem : public System;
@@ -36,6 +37,7 @@ namespace paecs
 
 	class BaseSystem
 	{
+	public:
 		virtual void update();
 	};
 
@@ -50,11 +52,11 @@ namespace paecs
 			//传入需要回调的函数
 			sysFunc = sysFunc1;
 		}
-		virtual ~System() {}
+		// virtual ~System();
 		// virtual void init();
 		virtual void update();
 		// what component types the system requires of entities (we can use this method in the constructor for example)
-		template <typename FirsrCompType, typename... RestCompTypes>
+		// template <typename FirsrCompType, typename... RestCompTypes>
 		//void requireComponent();
 
 		// returns a list of entities that the system should process each frame
@@ -68,10 +70,11 @@ namespace paecs
 
 		//const ComponentMask& getComponentMask() const { return componentMask; }
 
-		protected :
-			// Scene &getScene() const;
-			ComponentMask componentMask;
+	protected:
+		// Scene &getScene() const;
+		ComponentMask componentMask;
 		Scene &scene;
+		void (*sysFunc)(...);
 
 	private:
 		// template <typename CompType>
@@ -79,7 +82,7 @@ namespace paecs
 		// which components an entity must have in order for the system to process the entity
 
 		//存储需要执行的函数指针
-		void (*sysFunc)(...);
+
 		// vector of all entities that the system is interested in
 		// std::vector<Entity> entities;
 	};

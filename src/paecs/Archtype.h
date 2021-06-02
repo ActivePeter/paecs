@@ -9,21 +9,29 @@
 #include "ArchtypeManager.h"
 #include "parallel_hashmap/phmap.h"
 #include "Archtype.h"
+#include "list"
+#include "unordered_map"
 
 namespace paecs
 {
+	class ArchtypeManager;
+	struct Chunk;
+	class Archtype;
+	struct EntityDataPos;
+	////////////////////////////////////////
+
 	struct CompInfoInArchtype
 	{
 		//archtype中某个插件在chunk中的offset
 		int compOffsetInOneChunk;
 		//archtype中某个插件的描述信息引用
-		ComponentDiscription &compDiscription;
+		ComponentDiscription *compDiscription;
 		// size_t compSize;
+		CompInfoInArchtype() {}
 		CompInfoInArchtype(int offset, ComponentDiscription &disc) : compOffsetInOneChunk(offset),
-																	 compDiscription(disc) {}
+																	 compDiscription(&disc) {}
 	};
-	class ArchtypeManager;
-	struct Chunk;
+
 	//class Archtype;
 	//使用std::vector<std::shared_ptr<Archtype>>管理
 	class Archtype : public std::enable_shared_from_this<Archtype>
@@ -40,24 +48,11 @@ namespace paecs
 				 const ComponentMask &componentMask1,
 				 std::vector<BaseComponent::Id> componentsIds1,
 				 std::vector<int> componentsOffsets1,
-				 int maxCnt1)
-			: archtypeManager(archtypeManager1)
-		{
-			componentMask = componentMask1;
-			// componentsIds = componentsIds1;
-			// componentsOffsets = componentsOffsets1;
-			for (int i = 0; i < componentsIds1.size(); i++)
-			{
-				auto compInfo = CompInfoInArchtype(componentsOffsets1[i], BaseComponent::getDiscriptionOfComponentById(componentsIds1[i]));
-				compIds2InfoMap[componentsIds1[i]] = compInfo;
-				// compIds2offsetsMap[componentsIds1[i]] = componentsOffsets1[i];
-			}
-			maxCnt = maxCnt1;
-			index = index1;
-			// maxCnt =config::ChunkSize/(constexpr (sizeof...(Comps));
-		}
+				 int maxCnt1);
 
+		// : archtypeManager(archtypeManager1) {}
 		//用于通过插件id直接查找插件信息，也可用于遍历插件信息
+		// std::unordered_map<BaseComponent::Id, CompInfoInArchtype> compIds2InfoMap;
 		phmap::flat_hash_map<BaseComponent::Id, CompInfoInArchtype> compIds2InfoMap;
 
 		template <typename Comp>
@@ -113,11 +108,11 @@ namespace paecs
 		 */
 		void cpyComponentDataFromOldDatapos2ChunkIndex_ifContainId(uint8_t *oldDataPos, BaseComponent::Id id, uint32_t index)
 		{
-			if (archtypePtr->compIds2InfoMap.contains(id))
+			if (archtypePtr->compIds2InfoMap.count(id))
 			{
 				// auto size = BaseComponent::getDiscriptionOfComponentById(id).componentSize;
 				auto &compInfo = archtypePtr->compIds2InfoMap[id];
-				auto &size = compInfo.compDiscription.componentSize;
+				auto &size = compInfo.compDiscription->componentSize;
 				auto &offset = compInfo.compOffsetInOneChunk;
 				// auto offset = .compOffsetInOneChunk;
 				// auto size=
@@ -130,7 +125,7 @@ namespace paecs
 		{
 			CompInfoInArchtype &info = this->archtypePtr->getCompInfo<Comp>();
 
-			return (Comp &)*(&(storage[info.compOffsetInOneChunk + info.compDiscription.componentSize * index]));
+			return (Comp &)*(&(storage[info.compOffsetInOneChunk + info.compDiscription->componentSize * index]));
 		}
 	};
 

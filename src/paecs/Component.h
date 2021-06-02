@@ -6,13 +6,15 @@
 #include <cassert>
 #include "ComponentMask.h"
 #include "parallel_hashmap/phmap.h"
+#include "unordered_map"
 
 namespace paecs
 {
-
+    using ComponentMask = std::vector<uint64_t>;
     struct ComponentDiscription
     {
         size_t componentSize;
+        ComponentDiscription() {}
         ComponentDiscription(size_t componentSize1)
         {
             componentSize = componentSize1;
@@ -29,10 +31,15 @@ namespace paecs
     {
     public:
         using Id = uint16_t;
+        static uint8_t maskVecSize;
+        // static uint8_t getMaskVecSize()
+        // {
+        //     return BaseComponent::maskVecSize;
+        // }
+
         static const Id MaxComponents = sizeof(uint64_t) * 8; //config::MAX_COMPONENTS;
 
-        static uint8_t maskVecSize;
-
+        // static std::unordered_map<Id, ComponentDiscription> componentId2DiscriptionMap;
         static phmap::flat_hash_map<Id, ComponentDiscription> componentId2DiscriptionMap;
         // static uint16_t GetComponentsCnt()
         // {
@@ -53,43 +60,39 @@ namespace paecs
     {
     public:
         //启动时就以及在堆内创建的变量，唯一表示一个component
-        static ComponentMask componentMask;
+
+        Id id;
+        ComponentMask cm;
+        //called only once becauce its singleton
+        Component()
+        {
+            id = nextId++;
+            if (id == MaxComponents)
+            {
+                BaseComponent::maskVecSize++;
+                //需要扩展ComponetMask的长度(本质是一个装着bitmask的vector)，因为archtype的map的key也是这个，所以要对key也进行扩长操作
+            }
+            // auto &mask = Component<T>::getMask(); //获取某一类型的mask,如果mask长度改变。则会在这个函数中自动匹配
+            cm[id / ComponentMaskCellSize] &= 1 << (id % ComponentMaskCellSize);
+
+            BaseComponent::componentId2DiscriptionMap[id] = ComponentDiscription(sizeof(T));
+        }
+
         // Returns the unique id of Component<T>
-        static Id getId()
-        {
-            static bool firstRun = false;
-            static auto id = nextId++; //只有第一次调用会执行赋值,后续都是记忆之前的数据,
-            if (!firstRun)
-            {
-                if (id == MaxComponents)
-                {
-                    BaseComponent::maskVecSize++;
-                    //需要扩展ComponetMask的长度(本质是一个装着bitmask的vector)，因为archtype的map的key也是这个，所以要对key也进行扩长操作
-                }
-                auto &mask = Component<T>::getMask(); //获取某一类型的mask,如果mask长度改变。则会在这个函数中自动匹配
-                mask[id / ComponentMaskCellSize].set(id % ComponentMaskCellSize);
+        static Id getId();
+        static ComponentMask &getMask();
 
-                BaseComponent::componentId2DiscriptionMap[id] = ComponentDiscription(sizeof(T));
-                // assert(id < MaxComponents);
-            }
-            firstRun = true;
+        //获取单例
+        static Component<T> &getInstance();
 
-            return id;
-        }
-        static ComponentMask &getMask()
-        {
-            //如果长度相等，那么直接返回，如果长度不等，则需要更新后返回
-            if (Component<T>::componentMask.size() == BaseComponent::maskVecSize)
-            {
-                return Component<T>::componentMask;
-            }
-            else
-            {
-                Component<T>::componentMask.resize(BaseComponent::maskVecSize);
-                return Component<T>::componentMask;
-            }
-        }
+    private:
+        Component<T> *singleton;
     };
+    namespace ComponentAbout
+    {
+        uint8_t getMaskVecSize();
+    }
+
     namespace ComponentIdFuncs
     {
         template <typename CompTypeFirst, typename... CompTypesAfter>

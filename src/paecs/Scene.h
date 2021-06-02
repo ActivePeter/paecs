@@ -13,26 +13,38 @@
 #include "EntityManager.h"
 #include "ArchtypeManager.h"
 #include "Entity.h"
+#include "unordered_map"
 
 namespace paecs
 {
 	// class ECManager;
 	class EntityManager;
 	class ArchtypeManager;
+	class EntityController;
+	class BaseSystem;
+	/////////////////////////////////////
+
 	class Scene
 	{
 	private:
 		phmap::flat_hash_map<std::type_index, std::shared_ptr<BaseSystem>> systems;
-
+		// std::unordered_map<std::type_index, std::shared_ptr<BaseSystem>> systems;
 		// std::unique_ptr<Entity> = nullptr;
 		// std::unique_ptr<SManager> sManager = nullptr;
 		/* data */
 
-		ArchtypeManager archtypeManager = ArchtypeManager(*this);
-		EntityManager entityManager = EntityManager(*this);
+		// ArchtypeManager archtypeManager(*this);
+		// EntityManager entityManager(*this);
+
+		std::shared_ptr<ArchtypeManager> archtypeManager;
+		std::shared_ptr<EntityManager> entityManager;
 
 	public:
-		Scene(/* args */) {}
+		Scene(/* args */)
+		{
+			archtypeManager = std::make_shared<ArchtypeManager>(*this);
+			entityManager = std::make_shared<EntityManager>(*this);
+		}
 		// ECManager &getEntityManager() const;
 		// SManager &getSystemManager() const;
 
@@ -61,11 +73,11 @@ namespace paecs
 		/////////////////////////////////////////////////////
 
 		//创建entity
-		template <typename... Comps>
-		inline EntityController createEntity();
+		// template <typename... Comps>
+		EntityController createEntity();
 
 		//删除entity
-		inline bool deleteEntity(EntityID id);
+		bool deleteEntity(EntityID id);
 
 		// std::unique_ptr<EventManager> eventManager = nullptr;
 		// ~Scene();

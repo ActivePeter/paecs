@@ -4,16 +4,43 @@
 #include "Scene.h"
 #include "EntityManager.h"
 // #include "ECManager.h"
+#include "Archtype.h"
+#include <parallel_hashmap/phmap_utils.h>
 
 namespace paecs
 {
+	struct Chunk;
+	class EntityManager;
+	////////////////////////////////////////////
+
 	//每个entity的唯一标识
 	struct EntityID
 	{
+		bool operator==(const EntityID &o) const
+		{
+			return index == o.index && generation == o.generation;
+		}
+		friend size_t hash_value(const EntityID &p)
+		{
+			return phmap::HashState().combine(0, p.index, p.generation);
+		}
 		uint32_t index;
 		uint32_t generation; //销毁后创建+1，用于区分
 	};
 
+	// namespace std
+	// {
+	// 	// inject specialization of std::hash for Person into namespace std
+	// 	// ----------------------------------------------------------------
+	// 	template <>
+	// 	struct hash<EntityID>
+	// 	{
+	// 		std::size_t operator()(EntityID const &p) const
+	// 		{
+	// 			return phmap::HashState().combine(0, p.index, p.generation);
+	// 		}
+	// 	};
+	// }
 	//存储entity的区块指针以及在区块中的index
 	struct EntityDataPos
 	{
@@ -23,46 +50,44 @@ namespace paecs
 		std::shared_ptr<Chunk> chunkPtr;
 		uint32_t index;
 
+		EntityDataPos() {}
 		EntityDataPos(
 			std::shared_ptr<Chunk> chunkPtr1,
 			// Chunk &chunkRef1,
 			uint32_t index1)
 			: chunkPtr(chunkPtr1),
-			//   chunkRef(chunkRef1),
-			index(index1) {
-			// chunkPtr = std::shared_ptr<Chunk>(&chunkRef1);
-		};
-		uint8_t* getCompDataHeadPtr(int compOffset, size_t compSize)
-		{
-			return &chunkPtr->storage[compOffset + index * compSize];
-		}
+			  //   chunkRef(chunkRef1),
+			  index(index1){
+				  // chunkPtr = std::shared_ptr<Chunk>(&chunkRef1);
+			  };
+		uint8_t *getCompDataHeadPtr(int compOffset, size_t compSize);
 	};
 	class EntityController
 	{
 	private:
-		EntityManager& entityManager;
+		EntityManager &entityManager;
 		EntityID entityId;
 		// std::shared_ptr<EntityDataPos> entityDataPos;
-		EntityDataPos& entityDataPos;
+		EntityDataPos &entityDataPos;
 		/* data */
 	public:
 		EntityController(
-			EntityManager& entityManager1,
+			EntityManager &entityManager1,
 			EntityID entityId1,
 			// const std::shared_ptr<EntityDataPos> &entityDataPos1
-			EntityDataPos& entityDataPos1) : entityManager(entityManager1),
-			entityId(entityId1),
-			entityDataPos(entityDataPos1)
+			EntityDataPos &entityDataPos1) : entityManager(entityManager1),
+											 entityId(entityId1),
+											 entityDataPos(entityDataPos1)
 		{
 		}
 		// template <typename CompType>
 		// EntityController addComponent(CompType &comp);
 
 		template <typename CompType>
-		EntityController& addEmptyComponent();
+		EntityController &addEmptyComponent();
 
 		template <typename CompType>
-		EntityController& removeComponent();
+		EntityController &removeComponent();
 	};
 
 	// // class ECManager;

@@ -10,6 +10,12 @@
 
 namespace paecs
 {
+	uint8_t *EntityDataPos::getCompDataHeadPtr(int compOffset, size_t compSize)
+	{
+
+		return &(chunkPtr->storage[compOffset + index * compSize]);
+	}
+
 	template <typename CompType>
 	EntityController &EntityController::addEmptyComponent()
 	{

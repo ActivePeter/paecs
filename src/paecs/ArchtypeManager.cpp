@@ -71,7 +71,7 @@ namespace paecs
             ComponentIdFuncs::getIdsOfComponents<NewComp>(ids);
             auto componentsCnt = ids.size();
             std::vector<int> offsets(componentsCnt);
-            int maxCnt = config::ChunkSize / (constexpr (sizeof...(Comps));
+            int maxCnt = config::ChunkSize / (constexpr(sizeof...(Comps)));
             //第一个offset就是0
             for (int i = 1; i < componentsCnt; i++)
             {
@@ -80,7 +80,7 @@ namespace paecs
                              maxCnt;
             }
             //添加顺序跟masks的顺序保持一致
-            archtypes[newSize - 1] = std::make_shared<Archtype>(*this,newSize - 1, cm, ids, offsets, maxCnt); //createArchtypeWithComponentMask(cm);
+            archtypes[newSize - 1] = std::make_shared<Archtype>(*this, newSize - 1, cm, ids, offsets, maxCnt); //createArchtypeWithComponentMask(cm);
             // archtypes[newSize-1]->
             // archtypes[newSize]->maxCnt=config::ChunkSize/(constexpr (sizeof...(Comps));
             return *archtypes[newSize];
