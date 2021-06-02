@@ -6,7 +6,11 @@ Implementation of ECS （Entity Component System）lib
 
 ## Table of Contents
 
-[TOC]
+- [Background](#Background)
+- [Features](#Features)
+- [Design](#Design)
+- [Start using](#Start-using)
+- [Todo](#Todo)
 
 ## Background
 
