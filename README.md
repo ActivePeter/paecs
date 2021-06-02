@@ -1,9 +1,53 @@
+[【中文】](./README_CN.md)
+
 # paecs
 
-simple implementation of ECS game model
+simple implementation of ECS （Entity Component System）lib
 
-尝试简单实现一个ecs模型并用于我的mc游戏中
+## Table of Contents
 
-## 记录
+[TOC]
 
-- [（一）刚开始](records/（一）刚开始.md)
+## Background
+
+When I'm writing an minecraft like game, I knows that ecs is a way to improve game performance. I'm writing this project not only for preparing for my minecraft project but also to improve my programming capability of c++  ---- it is the first complete and carefully designed c++ lib I'm writing.
+
+## Features
+
+- Archtype Model，entities are divided by component combination. Data is in continuous array which makes seeking and iteration faster.
+
+- Easy to add component and system
+
+  - only need to write a func with needed prams, then register it to system
+
+    ```c++
+    void helloworld_sys(A &a)
+    {
+    }
+    scene.addSysByFunc(helloworld_sys);
+    ```
+
+  - only need to write a simple struct, then register it to component
+
+    ```c++
+    struct A
+    {
+        int id;
+    };
+    struct B
+    {
+        int id;
+        char testChar;
+    };
+    scene.createEntity()
+            .addEmptyComponent<A>()
+            .addEmptyComponent<B>();
+    ```
+
+## Design
+
+## Start using
+
+## Todo
+
+- [ ]  multiple threads 
