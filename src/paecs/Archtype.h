@@ -38,12 +38,16 @@ namespace paecs
 	{ //某一类set的所有信息
 	private:
 		// static std::shared_ptr<Archtype<CompTypes>> singleCase;
-		ComponentMask componentMask;
-		ArchtypeManager &archtypeManager;
+
 		// vector Component/
 		int index;
 
 	public:
+		// variables /////////////////////
+		ComponentMask componentMask;
+		ArchtypeManager &archtypeManager;
+		//////////////////////////////////
+
 		Archtype(ArchtypeManager &archtypeManager1, int index1,
 				 const ComponentMask &componentMask1,
 				 std::vector<BaseComponent::Id> componentsIds1,
@@ -58,7 +62,7 @@ namespace paecs
 		template <typename Comp>
 		CompInfoInArchtype &getCompInfo()
 		{
-			return compIds2InfoMap[Component<Comp>().getId];
+			return compIds2InfoMap[Component<Comp>().getId()];
 		}
 		// std::vector<BaseComponent::Id> componentsIds;
 		//每个Components对应的Offset;

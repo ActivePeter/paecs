@@ -26,11 +26,21 @@ namespace paecs
 		template <class FuncType>
 		struct Specializer
 		{
+			using SpecializedUpdateSystemType = int;
+			enum
+			{
+				SysFuncOk = 0,
+			};
 		};
 		template <class RetType, class... ArgsType>
 		struct Specializer<RetType(ArgsType...)>
 		{
 			using SpecializedUpdateSystemType = UpdateSystem<ArgsType...>;
+
+			enum
+			{
+				SysFuncOk = 1,
+			};
 		};
 	}
 	// The system processes entities that it's interested in each frame. Derive from this one!
@@ -38,23 +48,23 @@ namespace paecs
 	class BaseSystem
 	{
 	public:
-		virtual void update();
+		virtual void update() {}
 	};
 
 	template <typename... Comps>
 	class System : public BaseSystem
 	{
 	public:
-		System(Scene &scene1, void (*sysFunc1)(...)) : scene(scene1)
+		System(Scene &scene1, void *sysFunc1) : scene(scene1)
 		{
 			//在这里根据Comps生成componentMask
-			this->componentMask = ComponentMaskFuncs::getComponentMaskOfComps<Comps...>();
+			ComponentMaskFuncs::ComponentMaskConstrctor<Comps...>().getMask(this->componentMask); // ComponentMaskFuncs::getComponentMaskOfComps<Comps...>();
 			//传入需要回调的函数
 			sysFunc = sysFunc1;
 		}
 		// virtual ~System();
 		// virtual void init();
-		virtual void update();
+		virtual void update() {}
 		// what component types the system requires of entities (we can use this method in the constructor for example)
 		// template <typename FirsrCompType, typename... RestCompTypes>
 		//void requireComponent();
@@ -74,7 +84,7 @@ namespace paecs
 		// Scene &getScene() const;
 		ComponentMask componentMask;
 		Scene &scene;
-		void (*sysFunc)(...);
+		void *sysFunc;
 
 	private:
 		// template <typename CompType>
@@ -113,12 +123,16 @@ namespace paecs
 	class UpdateSystem : public System<Comps...>
 	{
 	public:
+		UpdateSystem(Scene &scene1, void *sysFunc1)
+			: System(scene1, sysFunc1) {}
 		void update()
 		{
+			using CallBack = void (*)(...);
+			CallBack callbak = (CallBack)sysFunc;
 			//1.根据componentMask获取要遍历的archtype组
 			// System<Comps...>::sc
 			Scene &scene = this->scene;
-			auto archtypes = scene.archtypeManager.findArchtypeContainingMask(this->componentMask);
+			auto archtypes = scene.archtypeManager->findArchtypeContainingMask(this->componentMask);
 			for (int i = 0; i < archtypes.size(); i++)
 			{
 				auto &chunks = archtypes[i]->chunks;
@@ -127,7 +141,7 @@ namespace paecs
 				{
 					for (int j = 0; j < (*pos)->entityCnt; j++)
 					{
-						sysFunc(entityId, (*pos)->getCompDataOfIndex<Comps>(j)...);
+						callbak((*pos)->getCompDataOfIndex<Comps>(j)...);
 					}
 					//  useData(*pos);
 				}

@@ -12,7 +12,7 @@
 #include "Archtype.h"
 #include "EntityManager.h"
 #include "ArchtypeManager.h"
-#include "Entity.h"
+// #include "Entity.h"
 #include "unordered_map"
 
 namespace paecs
@@ -27,6 +27,8 @@ namespace paecs
 	class Scene
 	{
 	private:
+	public:
+		// variable /////////////////////////
 		phmap::flat_hash_map<std::type_index, std::shared_ptr<BaseSystem>> systems;
 		// std::unordered_map<std::type_index, std::shared_ptr<BaseSystem>> systems;
 		// std::unique_ptr<Entity> = nullptr;
@@ -38,8 +40,8 @@ namespace paecs
 
 		std::shared_ptr<ArchtypeManager> archtypeManager;
 		std::shared_ptr<EntityManager> entityManager;
+		/////////////////////////////////////
 
-	public:
 		Scene(/* args */)
 		{
 			archtypeManager = std::make_shared<ArchtypeManager>(*this);
@@ -58,7 +60,30 @@ namespace paecs
 		bool hasSys();
 
 		template <typename FuncType>
-		Scene &addSysByFunc(FuncType func);
+		Scene &addSysByFunc(FuncType *func) //;
+		{
+			//1.获取函数类型
+			// using functype = decltype(func);
+
+			//2.获取到含有函数参数类型的sys类型
+			// using speSys = UpdateSystem<A>;
+			// // using speSys = SystemAbout::Specializer<FuncType>::SpecializedUpdateSystemType;
+			// speSys(*this, &func);
+
+			UpdateSystem<A>(*this, func);
+			// auto baseSysPtr = std::dynamic_cast<BaseSystem>(std::make_shared<speSys>(*this, func));
+			// // systems[std::type_index(typeid(funcType)];
+			// systems[std::type_index(typeid(int)] =baseSysPtr;
+			// std::make_shared<speSys>(*this, func);
+
+			return *this;
+			//然后根据拿到的types创建system
+			// SpeSys()
+			//1.获取函数的参数类型组
+			// using params = decltype(util::args(helloworld));
+			//2.构造sys对象
+			// UpdateSystem<params>
+		}
 		// EventManager &getEventManager() const;
 
 		/////////////////////////////////////////////////////
