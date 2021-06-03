@@ -16,6 +16,9 @@ namespace paecs
 		// componentsOffsets = componentsOffsets1;
 		for (int i = 0; i < componentsIds1.size(); i++)
 		{
+			std::cout << componentsOffsets1.size() << std::endl;
+			std::cout << componentsIds1[i] << std::endl;
+
 			CompInfoInArchtype compInfo(componentsOffsets1[i], BaseComponent::getDiscriptionOfComponentById(componentsIds1[i]));
 			BaseComponent::Id id = componentsIds1[i];
 			// compIds2InfoMap[id] = compInfo;

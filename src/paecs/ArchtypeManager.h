@@ -54,6 +54,7 @@ namespace paecs
 
                 //maxCnt 是可容纳entity的最大数量  区块size/(旧插件size+新插件size)
                 int maxCnt = config::ChunkSize / sizeSum;
+                offsets.resize(ids.size());
                 //第一个offset就是0
                 for (int i = 1; i < ids.size(); i++)
                 {
@@ -73,7 +74,7 @@ namespace paecs
                 archtypes[newSize - 1] = std::make_shared<Archtype>(*this, newSize - 1, cm, ids, offsets, maxCnt); //createArchtypeWithComponentMask(cm);
                 // archtypes[newSize-1]->
                 // archtypes[newSize]->maxCnt=config::ChunkSize/(constexpr (sizeof...(Comps));
-                return *archtypes[newSize];
+                return *archtypes[newSize - 1];
             }
             // else
             // {

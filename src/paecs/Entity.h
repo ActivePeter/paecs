@@ -91,7 +91,8 @@ namespace paecs
 
 		//3，通过cm调用findOrCreateArchtype
 		auto &am = ec.entityManager.scene.archtypeManager;
-		Archtype &targetArchtype = am->findOrCreateArchtype<CompType>(cm, oldArchtypePtr); //am.createArchtypeWithComponentMask(cm);
+		auto &targetArchtype = am->findOrCreateArchtype<CompType>(cm, oldArchtypePtr);
+		// Archtype &targetArchtype = *archtypePtr; //am.createArchtypeWithComponentMask(cm);
 
 		//4，调用registMemForAnEntity
 		//   获取新的entity指向的entityDataPos
@@ -103,7 +104,7 @@ namespace paecs
 		//    这个不用做了。因为当前EntityController里存的就是map里内容的引用
 
 		//6.如果之前有数据，遍历之前的插件数据拷贝到现在的chunk中
-		if (oldEntityDataPos.chunkPtr != nullptr)
+		if (oldEntityDataPos.chunkPtr)
 		{
 			auto oldArchtype = oldEntityDataPos.chunkPtr->archtypePtr;
 			for (const auto &oldComp : oldArchtype->compIds2InfoMap)

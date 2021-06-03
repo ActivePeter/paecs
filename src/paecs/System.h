@@ -33,7 +33,7 @@ namespace paecs
 			};
 		};
 		template <class RetType, class... ArgsType>
-		struct Specializer<RetType(ArgsType...)>
+		struct Specializer<RetType(ArgsType &...)>
 		{
 			using SpecializedUpdateSystemType = UpdateSystem<ArgsType...>;
 
