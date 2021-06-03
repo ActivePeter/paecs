@@ -57,6 +57,7 @@ namespace paecs
 	public:
 		System(Scene &scene1, void *sysFunc1) : scene(scene1)
 		{
+
 			//在这里根据Comps生成componentMask
 			ComponentMaskFuncs::ComponentMaskConstrctor<Comps...>().getMask(this->componentMask); // ComponentMaskFuncs::getComponentMaskOfComps<Comps...>();
 			//传入需要回调的函数
@@ -146,6 +147,7 @@ namespace paecs
 					//  useData(*pos);
 				}
 			}
+
 			//2.遍历archtype中的数据。并且
 		}
 	};

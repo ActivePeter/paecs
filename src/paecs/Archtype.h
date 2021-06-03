@@ -62,7 +62,7 @@ namespace paecs
 		template <typename Comp>
 		CompInfoInArchtype &getCompInfo()
 		{
-			return compIds2InfoMap[Component<Comp>().getId()];
+			return compIds2InfoMap[Component<Comp>::getId()];
 		}
 		// std::vector<BaseComponent::Id> componentsIds;
 		//每个Components对应的Offset;

@@ -73,8 +73,9 @@ namespace paecs
                 //需要扩展ComponetMask的长度(本质是一个装着bitmask的vector)，因为archtype的map的key也是这个，所以要对key也进行扩长操作
             }
             cm.resize(BaseComponent::maskVecSize);
+            uint64_t idToMask = 1 << (id % MaxComponents);
             // auto &mask = Component<T>::getMask(); //获取某一类型的mask,如果mask长度改变。则会在这个函数中自动匹配
-            cm[id / MaxComponents] &= 1 << (id % MaxComponents);
+            cm[id / MaxComponents] |= idToMask;
 
             BaseComponent::componentId2DiscriptionMap[id] = ComponentDiscription(sizeof(T));
         }

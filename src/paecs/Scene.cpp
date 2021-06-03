@@ -59,7 +59,7 @@ namespace paecs
 	// }
 	void Scene::loop()
 	{ //遍历所有system
-		std::cout << "sys loop" << std::endl;
+		// std::cout << "sys loop" << std::endl;
 		for (const auto &sys : systems)
 		{
 			sys.second->update();

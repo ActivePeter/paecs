@@ -90,7 +90,7 @@ namespace paecs
 		}
 
 		//3，通过cm调用findOrCreateArchtype
-		auto &am = ec.entityManager.scene.archtypeManager;
+		auto am = ec.entityManager.scene.archtypeManager;
 		auto &targetArchtype = am->findOrCreateArchtype<CompType>(cm, oldArchtypePtr);
 		// Archtype &targetArchtype = *archtypePtr; //am.createArchtypeWithComponentMask(cm);
 

@@ -99,7 +99,7 @@ namespace paecs
         // std::vector<Archtype> findArchtypeContainingMask(const ComponentMask &cm);
         ArchtypeManager(Scene &scene1) : scene(scene1)
         {
-        }
+                }
 
     private:
         Scene &scene;
