@@ -7,16 +7,9 @@ set(NAME paecs)
 add_library(${NAME} STATIC ${SRC_FILES})
 
 if(MSVC)
-    # message(${CMAKE_BUILD_TYPE})
-    IF (CMAKE_BUILD_TYPE MATCHES "Debug")
-        set_target_properties( ${NAME} PROPERTIES
-            COMPILE_FLAGS "/MTd"
-        )
-    ELSE()
-        set_target_properties( ${NAME} PROPERTIES
-            COMPILE_FLAGS "/MT"
-        )
-    ENDIF()
+    set_target_properties( ${NAME} PROPERTIES
+        COMPILE_FLAGS "/MT"
+    )
     
 endif()
 # SET(CMAKE_EXE_LINKER_FLAGS /NODEFAULTLIB:"libcmt.lib")
