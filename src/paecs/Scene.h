@@ -103,6 +103,16 @@ namespace paecs
 		// template <typename... Comps>
 		EntityController createEntity();
 
+		/**
+		 * templete函数
+		 * 随机访问entity的某一个插件属性
+		 * 	 要通过返回值判断是否有效
+		*/
+		template <typename... CompType>
+		bool randomAccessEntity(const EntityID &id, CompType &&...comp)
+		{
+			return false;
+		}
 		//删除entity
 		bool deleteEntity(EntityID id);
 

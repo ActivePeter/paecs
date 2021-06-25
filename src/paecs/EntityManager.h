@@ -20,6 +20,7 @@ namespace paecs
 
 		//创建entity
 		EntityController createEntity();
+		EntityController createFinalEntity();
 
 		//删除entity
 		bool deleteEntity(EntityID entityId);

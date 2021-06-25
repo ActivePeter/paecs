@@ -23,6 +23,13 @@ namespace paecs
 		return EntityController(*this, entityId, entityId2DataPos_Map[entityId]);
 	}
 
+	// /**
+	//  * final entity will never be destroyed
+	// */
+	// EntityController EntityManager::createFinalEntity()
+	// {
+	// }
+
 	bool EntityManager::deleteEntity(EntityID entityId)
 	{
 		if (entityId2DataPos_Map.contains(entityId))

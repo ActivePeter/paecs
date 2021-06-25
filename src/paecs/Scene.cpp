@@ -95,6 +95,8 @@ namespace paecs
 		return entityManager->createEntity();
 	}
 
+	// template <typename... CompType>
+
 	bool Scene::deleteEntity(EntityID id)
 	{
 		return this->entityManager->deleteEntity(id);

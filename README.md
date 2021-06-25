@@ -12,6 +12,8 @@ Implementation of ECS （Entity Component System）lib
 - [Start using](#Start-using)
 - [Todo](#Todo)
 
+## [Record](./records/record.md)
+
 ## Background
 
 When I'm writing a minecraft like game, I knows that ecs is a way to improve game performance. I'm writing this project not only for preparing for my minecraft project but also to improve my programming capability of c++  ---- it is the first complete and carefully designed c++ lib I'm writing.
@@ -54,4 +56,5 @@ When I'm writing a minecraft like game, I knows that ecs is a way to improve gam
 
 ## Todo
 
+- [ ]  add final entity
 - [ ]  multiple threads 
