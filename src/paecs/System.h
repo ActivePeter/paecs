@@ -142,7 +142,7 @@ namespace paecs
 				{
 					for (int j = 0; j < (*pos)->entityCnt; j++)
 					{
-						callbak((*pos)->getCompDataOfIndex<Comps>(j)...);
+						callbak(((*pos)->getCompDataPtrOfIndex<Comps>(j))...);
 					}
 					//  useData(*pos);
 				}

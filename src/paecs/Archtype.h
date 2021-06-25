@@ -129,7 +129,9 @@ namespace paecs
 		{
 			CompInfoInArchtype &info = this->archtypePtr->getCompInfo<Comp>();
 			assert(&info);
-			return (Comp &)*(&(storage[info.compOffsetInOneChunk + info.compDiscription->componentSize * index]));
+			return
+				// (Comp &)
+				*((Comp *)&(storage[info.compOffsetInOneChunk + info.compDiscription->componentSize * index]));
 		}
 		template <typename Comp>
 		Comp *getCompDataPtrOfIndex(int index)
