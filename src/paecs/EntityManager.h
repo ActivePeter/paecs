@@ -27,6 +27,11 @@ namespace paecs
 
 		Scene &scene;
 
+		EntityDataPos &getEntityDataPosById(const EntityID &id)
+		{
+			return entityId2DataPos_Map[id];
+		}
+
 	private:
 		//规定：从头部加入,从尾部取出
 		std::list<EntityID> destroyedEntities;

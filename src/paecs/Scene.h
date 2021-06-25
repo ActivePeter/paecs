@@ -103,15 +103,29 @@ namespace paecs
 		// template <typename... Comps>
 		EntityController createEntity();
 
+	private:
+		void setCompRef(EntityDataPos &entityDataPos1, ...) {}					  //定义零个参数函数，递归调用到零个参数函数时。调用该函数，然后终止继续递归
+		template <typename T, typename... Args>									  //Args是一个模板参数包
+		void setCompRef(EntityDataPos &entityDataPos1, T *&first, Args *&...left) //args是一个函数参数包
+		{
+			first = entityDataPos1.chunkPtr->getCompDataPtrOfIndex<T>(entityDataPos1.index);
+			setCompRef(entityDataPos1, left);
+		}
+
+	public:
 		/**
 		 * templete函数
 		 * 随机访问entity的某一个插件属性
 		 * 	 要通过返回值判断是否有效
 		*/
 		template <typename... CompType>
-		bool randomAccessEntity(const EntityID &id, CompType &&...comp)
+		bool randomAccessEntity(const EntityID &id, CompType *&...comp)
 		{
-			return false;
+			auto &entityDataPos1 = entityManager->getEntityDataPosById(id);
+			setCompRef(entityDataPos1, comp...);
+			// entityDataPos1.chunkPtr->getCompDataOfIndex<CompType>(entityDataPos1.index)...;
+
+			return true;
 		}
 		//删除entity
 		bool deleteEntity(EntityID id);

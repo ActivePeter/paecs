@@ -97,9 +97,7 @@ namespace paecs
         }
         std::vector<std::shared_ptr<Archtype>> findArchtypeContainingMask(const ComponentMask &cm);
         // std::vector<Archtype> findArchtypeContainingMask(const ComponentMask &cm);
-        ArchtypeManager(Scene &scene1) : scene(scene1)
-        {
-                }
+        ArchtypeManager(Scene &scene1) : scene(scene1) {}
 
     private:
         Scene &scene;
