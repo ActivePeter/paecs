@@ -47,11 +47,6 @@ namespace paecs
 		{
 			if (chunks.empty() || chunks.back()->entityCnt == maxCnt)
 			{
-				// }else{
-				// }
-				// if (chunks.back().entityCnt == maxCnt)
-				// {
-				// chunks.resize(chunks.size() + 1);
 				chunks.push_back(std::make_shared<Chunk>(shared_from_this()));
 			}
 			chunks.back()->entityCnt++;
