@@ -16,6 +16,28 @@ namespace paecs
 	class World;
 	class Scene;
 
+	class SysGroupCounterBase
+	{
+	public:
+		int id = -1;
+		virtual int getId()
+		{
+		}
+	};
+	template <typename SysGroup>
+	class SysGroupCounter : SysGroupCounterBase
+	{
+	public:
+		int id = -1;
+		int getId()
+		{
+			// static id=
+			if (first)
+			{
+				first = false;
+			}
+		}
+	};
 	// template <typename... Comps>
 	// class UpdateSystem : public System;
 	template <typename... Comps>
