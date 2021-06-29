@@ -4,7 +4,7 @@
 namespace paecs
 {
     template <typename SysGroup, typename FuncType>
-    Scene &Scene::addSys2Group(FuncType *func)
+    Scene &Scene::addSys2Group(SysGroup &sysGroup, FuncType *func)
     {
         //若group中不包含，则执行添加group
 

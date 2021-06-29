@@ -16,28 +16,18 @@ namespace paecs
 	class World;
 	class Scene;
 
-	class SysGroupCounterBase
+	struct SysGroup
 	{
-	public:
-		int id = -1;
-		virtual int getId()
+		std::vector<std::shared_ptr<BaseSystem>> sysVector;
+		void runAll()
 		{
-		}
-	};
-	template <typename SysGroup>
-	class SysGroupCounter : SysGroupCounterBase
-	{
-	public:
-		int id = -1;
-		int getId()
-		{
-			// static id=
-			if (first)
+			for (const auto &sys : sysVector)
 			{
-				first = false;
+				sys->update();
 			}
 		}
 	};
+
 	// template <typename... Comps>
 	// class UpdateSystem : public System;
 	template <typename... Comps>

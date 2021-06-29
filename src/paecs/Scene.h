@@ -28,17 +28,6 @@ namespace paecs
 	{
 	private:
 	public:
-		std::vector<std::shared_ptr<SysGroupCounterBase>> sysGroups;
-		// variable /////////////////////////
-		phmap::flat_hash_map<std::type_index, std::shared_ptr<BaseSystem>> systems;
-		// std::unordered_map<std::type_index, std::shared_ptr<BaseSystem>> systems;
-		// std::unique_ptr<Entity> = nullptr;
-		// std::unique_ptr<SManager> sManager = nullptr;
-		/* data */
-
-		// ArchtypeManager archtypeManager(*this);
-		// EntityManager entityManager(*this);
-
 		std::shared_ptr<ArchtypeManager> archtypeManager;
 		std::shared_ptr<EntityManager> entityManager;
 		/////////////////////////////////////
@@ -52,29 +41,35 @@ namespace paecs
 		// SManager &getSystemManager() const;
 
 		/////////////////////////////////////////////////////
-		// sys
-		/////////////////////////////////////////////////////
-		template <typename SysClass>
-		Scene &addSys();
+		//
+		//		Part: system
 
-		template <typename SysClass>
-		bool hasSys();
+		// template <typename SysClass>
+		// Scene &addSys();
 
-		template <typename SysGroup, typename FuncType>
-		Scene &addSys2Group(FuncType *func); //;
+		// template <typename SysClass>
+		// bool hasSys();
+
+		/**
+		 	* @brief 将系统加入组
+			* @param index    参数1
+			* @param t        参数2 @see CTest
+		*/
+		template <typename FuncType>
+		Scene &addSys2Group(SysGroup &sysGroup, FuncType *func); //;
 
 		// EventManager &getEventManager() const;
 
 		/////////////////////////////////////////////////////
-		// comp
-		/////////////////////////////////////////////////////
+		//
+		// 		Part: comp
 
 		template <typename Func>
 		void foreachComps(Func &&func);
 
-		/////////////////////////////////////////////////////
-		// entity
-		/////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////
+		//
+		//		entity
 
 		//创建entity
 		// template <typename... Comps>
@@ -109,7 +104,7 @@ namespace paecs
 
 		// std::unique_ptr<EventManager> eventManager = nullptr;
 		// ~Scene();
-		void loop();
+		// void loop();
 	};
 
 	std::unique_ptr<Scene> createScene();
