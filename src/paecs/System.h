@@ -18,10 +18,10 @@ namespace paecs
 
 	struct SysGroup
 	{
-		std::vector<std::shared_ptr<BaseSystem>> sysVector;
+		std::vector<std::shared_ptr<BaseSystem>> systems;
 		void runAll()
 		{
-			for (const auto &sys : sysVector)
+			for (const auto &sys : systems)
 			{
 				sys->update();
 			}
@@ -60,6 +60,7 @@ namespace paecs
 	class BaseSystem
 	{
 	public:
+		std::type_index sysId;
 		virtual void update() {}
 	};
 

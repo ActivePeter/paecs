@@ -18,9 +18,27 @@ namespace paecs
 
         auto a = speSys(*this, func);
         auto b = std::make_shared<speSys>(*this, func);
-        auto sysId = std::type_index(typeid(FuncType));
+        b->sysId = std::type_index(typeid(FuncType));
         // auto baseSysPtr = std::dynamic_cast<BaseSystem>(std::make_shared<speSys>(*this, func));
-        systems[sysId] = std::static_pointer_cast<BaseSystem>(b);
+        bool hasSys = false;
+        for (auto &i : sysGroup.systems)
+        {
+            if (i->sysId == b->sysId)
+            {
+                hasSys = true;
+            }
+        }
+        if (!hasSys)
+        {
+            sysGroup.systems.emplace_back(std::static_pointer_cast<BaseSystem>(b));
+        }
+        else
+        {
+            log::out("A system has been added once, it's better to check up.");
+        }
+
+        // sysGroup.sysVector.emplace_back()
+        // systems[sysId] = std::static_pointer_cast<BaseSystem>(b);
         // systems[std::type_index(typeid(int)] =baseSysPtr;
         // std::make_shared<speSys>(*this, func);
 
