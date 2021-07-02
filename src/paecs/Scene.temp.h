@@ -3,6 +3,7 @@
 
 namespace paecs
 {
+
     template <typename FuncType>
     Scene &Scene::addSys2Group(SysGroup &sysGroup, FuncType *func)
     {
@@ -18,19 +19,14 @@ namespace paecs
 
         auto a = speSys(*this, func);
         auto b = std::make_shared<speSys>(*this, func);
-        b->sysId = std::type_index(typeid(FuncType));
+        // b->sysId = std::type_index(typeid(FuncType));
         // auto baseSysPtr = std::dynamic_cast<BaseSystem>(std::make_shared<speSys>(*this, func));
-        bool hasSys = false;
-        for (auto &i : sysGroup.systems)
+        // phmap::flat_hash_map<std::type_index, std::shared_ptr<BaseSystem>> systems;
+        auto funcTypeKey = std::type_index(typeid(FuncType));
+        if (!sysGroup.systems.contains(funcTypeKey))
         {
-            if (i->sysId == b->sysId)
-            {
-                hasSys = true;
-            }
-        }
-        if (!hasSys)
-        {
-            sysGroup.systems.emplace_back(std::static_pointer_cast<BaseSystem>(b));
+            sysGroup.systems[funcTypeKey] = b;
+            // sysGroup.systems.emplace_back(std::static_pointer_cast<BaseSystem>(b));
         }
         else
         {

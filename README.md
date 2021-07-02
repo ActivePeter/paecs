@@ -21,7 +21,7 @@ c++的ecs库 （Entity Component System）
 
 When I'm writing a minecraft like game, I knows that ecs is a way to improve game performance. I'm writing this project not only for preparing for my minecraft project but also to improve my programming capability of c++  ---- it is the first complete and carefully designed c++ lib I'm writing.
 
-在我写我类似于mc游戏--voxelfram的时候，我了解到ecs是一种提升遍历性能的模式。写这个库的目的一方面是给我的voxelframe 用，一方面是提升我编写c++的能力，这也是我第一个完整且仔细设计过的c++库。
+在我写我类似于mc游戏--voxelfram的时候，我了解到ecs是一种提升遍历性能并解耦数据和操作的模式。写这个库的目的一方面是给我的voxelframe 用，一方面是提升我编写c++的能力，这也是我第一个完整且仔细设计过的c++库。
 
 ## Features (特性)
 

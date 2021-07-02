@@ -229,7 +229,7 @@ namespace paecs
 		{
 			// return addEmptyComponent2Entity<CompType>(*this);
 			CompType comp;
-			memset(comp, 0, sizeof(CompType));
+			memset(&comp, 0, sizeof(CompType));
 			return addComponent(comp);
 		}
 

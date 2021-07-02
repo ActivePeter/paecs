@@ -52,8 +52,8 @@ namespace paecs
 
 		/**
 		 	* @brief 将系统加入组
-			* @param index    参数1
-			* @param t        参数2 @see CTest
+			* @param sysGroup    目标系统组
+			* @param sysFunc        系统函数
 		*/
 		template <typename FuncType>
 		Scene &addSys2Group(SysGroup &sysGroup, FuncType *func); //;

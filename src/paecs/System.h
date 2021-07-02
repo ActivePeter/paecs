@@ -1,4 +1,7 @@
-#pragma once
+struct SysGroup;
+
+#ifndef __paecs_SYSTEM_H__
+#define __paecs_SYSTEM_H__
 
 // #include "Event.h"
 #include "Entity.h"
@@ -15,18 +18,6 @@ namespace paecs
 
 	class World;
 	class Scene;
-
-	struct SysGroup
-	{
-		std::vector<std::shared_ptr<BaseSystem>> systems;
-		void runAll()
-		{
-			for (const auto &sys : systems)
-			{
-				sys->update();
-			}
-		}
-	};
 
 	// template <typename... Comps>
 	// class UpdateSystem : public System;
@@ -60,8 +51,26 @@ namespace paecs
 	class BaseSystem
 	{
 	public:
-		std::type_index sysId;
+		// std::type_index sysId;
 		virtual void update() {}
+		// BaseSystem() {}
+	};
+
+	/**
+	 * 系统组，用于分离不同调用时的系统
+	 * SysGroup, used to separate systems with different calling time
+	*/
+	struct SysGroup
+	{
+		phmap::flat_hash_map<std::type_index, std::shared_ptr<BaseSystem>> systems;
+		// std::vector<std::shared_ptr<BaseSystem>> systems;
+		void runAll()
+		{
+			for (const auto &sys : systems)
+			{
+				sys.second->update();
+			}
+		}
 	};
 
 	template <typename... Comps>
@@ -172,3 +181,5 @@ namespace paecs
 	// }
 
 }
+
+#endif // __SYSTEM_H__
