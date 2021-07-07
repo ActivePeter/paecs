@@ -1,6 +1,6 @@
 set(PAECS_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-include_directories (${PAECS_SRC_DIR})
+include_directories (${PAECS_SRC_DIR} ../parallel-hashmap)
 file(GLOB_RECURSE SRC_FILES ${PAECS_SRC_DIR}/*.cpp ${PAECS_SRC_DIR}/*.cc)
 
 set(NAME paecs)
