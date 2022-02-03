@@ -8,13 +8,6 @@ c++ implementation of ECS （Entity Component System）lib
 
 c++的ecs库 （Entity Component System）
 
-## Table of Contents (内容)
-
-- [Record](./records/record.md)
-- [Background](#Background)
-- [Features](#Features)
-- [Todo](#Todo)
-
 ## [Record (记录)](./records/record.md)
 
 ## Background (背景)
@@ -80,8 +73,10 @@ When I'm writing a minecraft like game, I knows that ecs is a way to improve gam
             .addEmptyComponent<B>();
     ```
     
-  - **Random Access** Input pointer to access entity by entityID
+  - **Random Access/随机访问** 
   
+    Input pointer to access entity by entityID
+    
     输入指针然后访问entity对应组件的数据，
     
     ```c++
@@ -97,8 +92,23 @@ When I'm writing a minecraft like game, I knows that ecs is a way to improve gam
     cameraPtr->Position = pos;
     ```
     
+  - **Rigist singleton/注册单例资源**
+  
+    ```c++
+    ecs.scene->registSingleton<ContextId>(
+        [this](ContextId& cid)
+        {
+            cid.id = this->context_id.id;
+        });
+    ```
+  
+    
 
 ## Todo
+
+- [x] easy to add sys and entity
+
+  便捷注册 **系统** 和 **实体**
 
 - [x] random access
 
@@ -107,6 +117,10 @@ When I'm writing a minecraft like game, I knows that ecs is a way to improve gam
 - [x] added SysGroup
 
   系统组概念
+
+- [x] Rigist singleton
+
+  注册单例资源
 
 - [ ] multiple threads 
 

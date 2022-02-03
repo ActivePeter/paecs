@@ -1,6 +1,7 @@
 //#include "Archtype.h"
-#include "parallel_hashmap/phmap.h"
 #include "ArchtypeManager.h"
+#include "parallel_hashmap/phmap.h"
+
 
 namespace paecs
 {

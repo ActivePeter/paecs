@@ -1,6 +1,7 @@
 #pragma once
-#include "Core.h"
 #include "Entity.h"
+#include "Core.h"
+
 // #include "Component.h"
 // #include "ComponentPool.h"
 #include "memory"
@@ -10,7 +11,7 @@
 
 namespace paecs
 {
-	uint8_t *EntityDataPos::getCompDataHeadPtr(int compOffset, size_t compSize)
+	uint8_t* EntityDataPos::getCompDataHeadPtr(int compOffset, size_t compSize)
 	{
 
 		return &(chunkPtr->storage[compOffset + index * compSize]);

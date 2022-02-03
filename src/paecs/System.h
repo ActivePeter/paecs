@@ -63,13 +63,16 @@ namespace paecs
 	struct SysGroup
 	{
 		phmap::flat_hash_map<std::type_index, std::shared_ptr<BaseSystem>> systems;
+		uint64_t run_cnt = 0;
 		// std::vector<std::shared_ptr<BaseSystem>> systems;
 		void runAll()
 		{
-			for (const auto &sys : systems)
+			for (const auto& sys : systems)
 			{
 				sys.second->update();
 			}
+
+			run_cnt++;
 		}
 	};
 
@@ -77,7 +80,7 @@ namespace paecs
 	class System : public BaseSystem
 	{
 	public:
-		System(Scene &scene1, void *sysFunc1) : scene(scene1)
+		System(Scene& scene1, void* sysFunc1) : scene(scene1)
 		{
 
 			//在这里根据Comps生成componentMask
@@ -106,8 +109,8 @@ namespace paecs
 	protected:
 		// Scene &getScene() const;
 		ComponentMask componentMask;
-		Scene &scene;
-		void *sysFunc;
+		Scene& scene;
+		void* sysFunc;
 
 	private:
 		// template <typename CompType>
@@ -129,24 +132,33 @@ namespace paecs
 	 * 参考一下decs
 	 *
 	 * **/
-	// 		template<typename... Args, typename Func>
-	// 		void entity_chunk_iterate(DataChunk* chnk, Func&& function) {
-	// 			auto tup = std::make_tuple(get_chunk_array<Args>(chnk)...);
-	// #ifndef NDEBUG
-	// 			(assert(std::get<decltype(get_chunk_array<Args>(chnk))>(tup).chunkOwner == chnk), ...);
-	// #endif
+	 // 		template<typename... Args, typename Func>
+	 // 		void entity_chunk_iterate(DataChunk* chnk, Func&& function) {
+	 // 			auto tup = std::make_tuple(get_chunk_array<Args>(chnk)...);
+	 // #ifndef NDEBUG
+	 // 			(assert(std::get<decltype(get_chunk_array<Args>(chnk))>(tup).chunkOwner == chnk), ...);
+	 // #endif
 
-	// 			for (int i = chnk->header.last - 1; i >= 0; i--) {
-	// 				function(std::get<decltype(get_chunk_array<Args>(chnk))>(tup)[i]...);
-	// 			}
-	// 		}
-
+	 // 			for (int i = chnk->header.last - 1; i >= 0; i--) {
+	 // 				function(std::get<decltype(get_chunk_array<Args>(chnk))>(tup)[i]...);
+	 // 			}
+	 // 		}
+	template <typename ArgType>
+	ArgType* _get_arg_ptr(Scene& scene, const std::shared_ptr<paecs::Chunk>& chunk, int index)
+	{
+		auto a = scene.getSingletonPtr<ArgType>();
+		if (a)
+		{
+			return a;
+		}
+		return chunk->getCompDataPtrOfIndex<ArgType>(index);
+	}
 	//在addsystem的时候创建这样的实例
 	template <typename... Comps>
 	class UpdateSystem : public System<Comps...>
 	{
 	public:
-		UpdateSystem(Scene &scene1, void *sysFunc1)
+		UpdateSystem(Scene& scene1, void* sysFunc1)
 			: System(scene1, sysFunc1) {}
 		void update()
 		{
@@ -154,17 +166,20 @@ namespace paecs
 			CallBack callbak = (CallBack)sysFunc;
 			//1.根据componentMask获取要遍历的archtype组
 			// System<Comps...>::sc
-			Scene &scene = this->scene;
-			auto archtypes = scene.archtypeManager->findArchtypeContainingMask(this->componentMask);
+			Scene& scene1 = this->scene;
+			auto archtypes = scene1.archtypeManager->findArchtypeContainingMask(this->componentMask);
 			for (int i = 0; i < archtypes.size(); i++)
 			{
-				auto &chunks = archtypes[i]->chunks;
+				auto& chunks = archtypes[i]->chunks;
 				auto pos = chunks.cbegin();
 				for (; pos != chunks.cend(); ++pos)
 				{
-					for (int j = 0; j < (*pos)->entityCnt; j++)
+					for (uint32_t j = 0; j < (*pos)->entityCnt; j++)
 					{
-						callbak(((*pos)->getCompDataPtrOfIndex<Comps>(j))...);
+						callbak(
+							(_get_arg_ptr<Comps>(scene1, (*pos), j))...
+						);
+						//callbak(((*pos)->getCompDataPtrOfIndex<Comps>(j))...);
 					}
 					//  useData(*pos);
 				}

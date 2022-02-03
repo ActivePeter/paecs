@@ -1,6 +1,6 @@
+#include "Scene.h"
 
 #include "Core.h"
-#include "Scene.h"
 #include "memory"
 #include "System.h"
 #include "EntityManager.h"
@@ -12,7 +12,7 @@ namespace paecs
 	// comp
 	/////////////////////////////////////////////////////
 	template <typename Func>
-	void Scene::foreachComps(Func &&func)
+	void Scene::foreachComps(Func&& func)
 	{
 		using paramTypes = decltype(adv::args(&Func::operator()));
 

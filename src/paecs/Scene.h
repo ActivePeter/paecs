@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 // #include "ECManager.h"
 // #include "SManager.h"
 #include <memory>
@@ -14,6 +14,7 @@
 #include "ArchtypeManager.h"
 // #include "Entity.h"
 #include "unordered_map"
+#include "singleton.h"
 
 namespace paecs
 {
@@ -44,28 +45,22 @@ namespace paecs
 		//
 		//		Part: system
 
-		// template <typename SysClass>
-		// Scene &addSys();
-
-		// template <typename SysClass>
-		// bool hasSys();
-
 		/**
-		 	* @brief 将系统加入组
+			* @brief 将系统加入组
 			* @param sysGroup    目标系统组
 			* @param sysFunc        系统函数
 		*/
 		template <typename FuncType>
-		Scene &addSys2Group(SysGroup &sysGroup, FuncType *func); //;
+		Scene& addSys2Group(SysGroup& sysGroup, FuncType* func); //;
 
 		// EventManager &getEventManager() const;
 
 		/////////////////////////////////////////////////////
 		//
 		// 		Part: comp
-
+		//
 		template <typename Func>
-		void foreachComps(Func &&func);
+		void foreachComps(Func&& func);
 
 		//////////////////////////////////////////////////////
 		//
@@ -76,14 +71,14 @@ namespace paecs
 		EntityController createEntity();
 
 	private:
-		void setCompRef(EntityDataPos &entityDataPos1, ...) {}					  //定义零个参数函数，递归调用到零个参数函数时。调用该函数，然后终止继续递归
+		void setCompRef(EntityDataPos& entityDataPos1, ...) {}					  //定义零个参数函数，递归调用到零个参数函数时。调用该函数，然后终止继续递归
 		template <typename T, typename... Args>									  //Args是一个模板参数包
-		void setCompRef(EntityDataPos &entityDataPos1, T *&first, Args *&...left) //args是一个函数参数包
+		void setCompRef(EntityDataPos& entityDataPos1, T*& first, Args*&...left) //args是一个函数参数包
 		{
 			first = entityDataPos1.chunkPtr->getCompDataPtrOfIndex<T>(entityDataPos1.index);
-			setCompRef(entityDataPos1, left);
+			setCompRef(entityDataPos1, left...);
 		}
-
+		SingletonManager singleton_manager;
 	public:
 		/**
 		 * templete函数
@@ -91,9 +86,9 @@ namespace paecs
 		 * 	 要通过返回值判断是否有效
 		*/
 		template <typename... CompType>
-		bool randomAccessEntity(const EntityID &id, CompType *&...comp)
+		bool randomAccessEntity(const EntityID& id, CompType*&...comp)
 		{
-			auto &entityDataPos1 = entityManager->getEntityDataPosById(id);
+			auto& entityDataPos1 = entityManager->getEntityDataPosById(id);
 			setCompRef(entityDataPos1, comp...);
 			// entityDataPos1.chunkPtr->getCompDataOfIndex<CompType>(entityDataPos1.index)...;
 
@@ -102,9 +97,16 @@ namespace paecs
 		//删除entity
 		bool deleteEntity(EntityID id);
 
-		// std::unique_ptr<EventManager> eventManager = nullptr;
-		// ~Scene();
-		// void loop();
+		template <typename ResType>
+		void registSingleton(std::function<void(ResType&)> init_func)
+		{
+			singleton_manager.registSingleton(init_func);
+		}
+		template <typename ResType>
+		ResType* getSingletonPtr()
+		{
+			return singleton_manager.getSingletonPtr<ResType>();
+		}
 	};
 
 	std::unique_ptr<Scene> createScene();
