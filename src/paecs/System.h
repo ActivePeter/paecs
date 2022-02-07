@@ -72,7 +72,7 @@ namespace paecs
 				sys.second->update();
 			}
 
-			run_cnt++;
+			//run_cnt++;
 		}
 	};
 
@@ -153,13 +153,40 @@ namespace paecs
 		}
 		return chunk->getCompDataPtrOfIndex<ArgType>(index);
 	}
+	template <typename T>
+	int _cnt_single_(Scene& scene, T* t)
+	{
+		return scene.getSingletonPtr<T>() != nullptr;
+	}
+	template <typename T, typename...Ts>
+	int _cnt_single_(Scene& scene, T* t, Ts*...ts)
+	{
+		return _cnt_single_(scene, t) + _cnt_single_(scene, ts...);
+	}
+	template <typename T>
+	int _cnt_of_T(T* t)
+	{
+		return 1;
+	}
+	template <typename T, typename...Ts>
+	int _cnt_of_T(T* t, Ts* ...ts)
+	{
+		return _cnt_of_T(t) + _cnt_of_T(ts...);
+	}
 	//在addsystem的时候创建这样的实例
 	template <typename... Comps>
 	class UpdateSystem : public System<Comps...>
 	{
+		int cnt_of_single = 0;
+		int cnt_of_T = 0;
 	public:
 		UpdateSystem(Scene& scene1, void* sysFunc1)
-			: System(scene1, sysFunc1) {}
+			: System(scene1, sysFunc1)
+		{
+			char* a = nullptr;
+			cnt_of_single = _cnt_single_(scene1, (Comps*)(a)...);
+			cnt_of_T = _cnt_of_T<>((Comps*)(a)...);
+		}
 		void update()
 		{
 			using CallBack = void (*)(...);
@@ -167,6 +194,13 @@ namespace paecs
 			//1.根据componentMask获取要遍历的archtype组
 			// System<Comps...>::sc
 			Scene& scene1 = this->scene;
+			if (cnt_of_T == cnt_of_single)
+			{
+				callbak(
+					(scene1.getSingletonPtr<Comps>())...
+				);
+				return;
+			}
 			auto archtypes = scene1.archtypeManager->findArchtypeContainingMask(this->componentMask);
 			for (int i = 0; i < archtypes.size(); i++)
 			{
