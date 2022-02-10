@@ -173,6 +173,7 @@ namespace paecs
 	{
 		return _cnt_of_T(t) + _cnt_of_T(ts...);
 	}
+
 	//在addsystem的时候创建这样的实例
 	template <typename... Comps>
 	class UpdateSystem : public System<Comps...>

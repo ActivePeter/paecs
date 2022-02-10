@@ -60,9 +60,15 @@ namespace paecs
 		phmap::flat_hash_map<BaseComponent::Id, CompInfoInArchtype> compIds2InfoMap;
 
 		template <typename Comp>
-		CompInfoInArchtype& getCompInfo()
+		CompInfoInArchtype* getCompInfo()
 		{
-			return compIds2InfoMap[Component<Comp>::getId()];
+			auto a = compIds2InfoMap.find(Component<Comp>::getId());
+			if (a == compIds2InfoMap.end())
+			{
+				return nullptr;
+			}
+			return &(*a).second;
+			//= compIds2InfoMap[Component<Comp>::getId()];
 		}
 		// std::vector<BaseComponent::Id> componentsIds;
 		//每个Components对应的Offset;
@@ -127,8 +133,8 @@ namespace paecs
 		template <typename Comp>
 		Comp& getCompDataOfIndex(int index)
 		{
-			CompInfoInArchtype& info = this->archtypePtr->getCompInfo<Comp>();
-			assert(&info);
+			CompInfoInArchtype& info = *(this->archtypePtr->getCompInfo<Comp>());
+			//assert(&info);
 			return
 				// (Comp &)
 				*((Comp*)&(storage[info.compOffsetInOneChunk + info.compDiscription->componentSize * index]));
@@ -137,9 +143,17 @@ namespace paecs
 		Comp* getCompDataPtrOfIndex(int index)
 		{
 
-			CompInfoInArchtype& info = this->archtypePtr->getCompInfo<Comp>();
-			assert(&info);
-			return (Comp*)(&(storage[info.compOffsetInOneChunk + info.compDiscription->componentSize * index]));
+			CompInfoInArchtype* info = this->archtypePtr->getCompInfo<Comp>();
+			//assert(&info);
+			if (info)
+			{
+				return (Comp*)(&(storage[info->compOffsetInOneChunk + info->compDiscription->componentSize * index]));
+			}
+			else
+			{
+				return nullptr;
+			}
+
 		}
 	};
 
