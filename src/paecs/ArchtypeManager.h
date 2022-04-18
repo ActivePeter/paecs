@@ -16,7 +16,7 @@ namespace paecs
 		{
 			//find 是根据mask来找，但是创建需要更完整的信息
 			//int foundIndex = -1;
-			for (int i = 0; i < archtypeComponentMasks.size(); i++)
+			for (size_t i = 0; i < archtypeComponentMasks.size(); i++)
 			{
 				if (archtypeComponentMasks[i] == cm)
 				{
@@ -56,7 +56,7 @@ namespace paecs
 				int maxCnt = config::ChunkSize / sizeSum;
 				offsets.resize(ids.size());
 				//第一个offset就是0
-				for (int i = 1; i < ids.size(); i++)
+				for (size_t i = 1; i < ids.size(); i++)
 				{
 					offsets[i] = offsets[i - 1] + sizeOfComps[i - 1] * maxCnt;
 					// (BaseComponent::getDiscriptionOfComponentById(ids[i - 1])

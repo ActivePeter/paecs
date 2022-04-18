@@ -71,12 +71,14 @@ namespace paecs
 		EntityController createEntity();
 
 	private:
-		void setCompRef(EntityDataPos& entityDataPos1, ...) {}					  //定义零个参数函数，递归调用到零个参数函数时。调用该函数，然后终止继续递归
+		bool setCompRef(EntityDataPos& entityDataPos1, ...) { return true; }					  //定义零个参数函数，递归调用到零个参数函数时。调用该函数，然后终止继续递归
 		template <typename T, typename... Args>									  //Args是一个模板参数包
-		void setCompRef(EntityDataPos& entityDataPos1, T*& first, Args*&...left) //args是一个函数参数包
+		bool setCompRef(EntityDataPos& entityDataPos1, T*& first, Args*&...left) //args是一个函数参数包
 		{
 			first = entityDataPos1.chunkPtr->getCompDataPtrOfIndex<T>(entityDataPos1.index);
-			setCompRef(entityDataPos1, left...);
+			bool ret = first != nullptr;
+			ret = ret && setCompRef(entityDataPos1, left...);
+			return ret;
 		}
 		SingletonManager singleton_manager;
 	public:
@@ -89,10 +91,10 @@ namespace paecs
 		bool randomAccessEntity(const EntityID& id, CompType*&...comp)
 		{
 			auto& entityDataPos1 = entityManager->getEntityDataPosById(id);
-			setCompRef(entityDataPos1, comp...);
+			return setCompRef(entityDataPos1, comp...);
 			// entityDataPos1.chunkPtr->getCompDataOfIndex<CompType>(entityDataPos1.index)...;
 
-			return true;
+			//return true;
 		}
 		//删除entity
 		bool deleteEntity(EntityID id);

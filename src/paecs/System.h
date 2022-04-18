@@ -203,7 +203,7 @@ namespace paecs
 				return;
 			}
 			auto archtypes = scene1.archtypeManager->findArchtypeContainingMask(this->componentMask);
-			for (int i = 0; i < archtypes.size(); i++)
+			for (size_t i = 0; i < archtypes.size(); i++)
 			{
 				auto& chunks = archtypes[i]->chunks;
 				auto pos = chunks.cbegin();
